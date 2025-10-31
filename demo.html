@@ -211,9 +211,16 @@
         <p class="subtitle">Embeddable feedback widget for games and web applications</p>
 
         <div class="info-box">
-            <h2>📍 Look for the feedback button!</h2>
-            <p>The BetaHub widget is now active on this page. Look for the floating button in the bottom-right corner of your screen. Click it to test the feedback form!</p>
-            <p><strong>Note:</strong> This demo uses placeholder credentials. To use with your own project, replace the <code>projectId</code> and <code>authToken</code> values below.</p>
+            <h2>📍 Try the feedback widget!</h2>
+            <p>The BetaHub widget is now active on this page. You can open it in two ways:</p>
+            <ul style="margin: 10px 0 10px 20px; line-height: 1.8;">
+                <li>Click the button below to test it right away</li>
+                <li>Use the floating button in the bottom-right corner</li>
+            </ul>
+            <button class="demo-button" onclick="BetaHubWidget.open()" style="margin-top: 15px;">
+                💬 Open Feedback Widget
+            </button>
+            <p style="margin-top: 15px;"><strong>Note:</strong> This demo is connected to a real BetaHub project. Your submissions will be received!</p>
         </div>
 
         <div class="features">
@@ -304,8 +311,8 @@
     <script>
         // Initialize the widget with demo configuration
         BetaHubWidget.init({
-            projectId: 'demo-project',
-            authToken: 'tkn-demo-token-replace-with-real-token',
+            projectId: 'pr-5287510306',
+            authToken: 'tkn-15e6fbc1470613d5cfd2199edbde52157379b8c6dcd365441eabf8fea62d76a7',
             position: 'bottom-right',
             buttonText: 'Feedback',
             customFields: {
@@ -315,8 +322,8 @@
             }
         });
 
-        // Note: This demo won't actually submit to the API without valid credentials
-        // To test with real submissions, replace the projectId and authToken above
+        // Note: This demo is configured with BetaHub demo project credentials
+        // Submissions will be sent to: https://app.betahub.io/projects/pr-5287510306
     </script>
 </body>
 </html>

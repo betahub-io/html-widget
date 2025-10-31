@@ -735,6 +735,11 @@
       this.showModal(modal);
     },
 
+    // Public method to open the widget from external code
+    open: function() {
+      this.openModal();
+    },
+
     closeModal: function() {
       const modal = this.shadow.querySelector('#betahub-modal');
       this.hideModal(modal);
