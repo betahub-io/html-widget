@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BetaHub Widget Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #A8D8EA 0%, #DCEFF7 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .info-box {
+            background: #DCEFF7;
+            border: 2px solid #A8D8EA;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .info-box h2 {
+            color: #237390;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .info-box p {
+            color: #2C3E50;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .info-box code {
+            background: #B1D5E2;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #237390;
+        }
+
+        .code-block {
+            background: #1e1f22;
+            color: #dbdee1;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-bottom: 30px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .code-block .comment {
+            color: #6a9955;
+        }
+
+        .code-block .string {
+            color: #ce9178;
+        }
+
+        .code-block .keyword {
+            color: #569cd6;
+        }
+
+        .code-block .function {
+            color: #dcdcaa;
+        }
+
+        .features {
+            margin-bottom: 30px;
+        }
+
+        .features h2 {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        .features ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .features li {
+            padding: 10px 0;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .features li:before {
+            content: '✓';
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background: #58CEA7;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-weight: bold;
+        }
+
+        .demo-section {
+            background: #fafafa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .demo-section h3 {
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .demo-section p {
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .demo-button {
+            background: #237390;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .demo-button:hover {
+            background: #1E627B;
+            transform: translateY(-2px);
+        }
+
+        .canvas-demo {
+            margin-top: 30px;
+            padding: 20px;
+            background: #DCEFF7;
+            border-radius: 8px;
+        }
+
+        .canvas-demo h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        #game-canvas {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, #237390 0%, #144252 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .footer {
+            text-align: center;
+            color: #666;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 BetaHub Feedback Widget</h1>
+        <p class="subtitle">Embeddable feedback widget for games and web applications</p>
+
+        <div class="info-box">
+            <h2>📍 Look for the feedback button!</h2>
+            <p>The BetaHub widget is now active on this page. Look for the floating button in the bottom-right corner of your screen. Click it to test the feedback form!</p>
+            <p><strong>Note:</strong> This demo uses placeholder credentials. To use with your own project, replace the <code>projectId</code> and <code>authToken</code> values below.</p>
+        </div>
+
+        <div class="features">
+            <h2>✨ Features</h2>
+            <ul>
+                <li>Three feedback types: Bug Reports, Suggestions, and Support Tickets</li>
+                <li>Shadow DOM for complete CSS isolation</li>
+                <li>Beautiful pastel blue minimalistic design</li>
+                <li>Custom fields for game metadata (version, level, etc.)</li>
+                <li>Responsive design that works on any screen size</li>
+                <li>Zero dependencies - pure vanilla JavaScript</li>
+                <li>Easy integration with any web game engine (PixiJS, Phaser, etc.)</li>
+            </ul>
+        </div>
+
+        <div class="code-block">
+            <pre><span class="comment">// Basic Usage</span>
+<span class="keyword">&lt;script</span> src=<span class="string">"betahub-widget.js"</span><span class="keyword">&gt;&lt;/script&gt;</span>
+<span class="keyword">&lt;script&gt;</span>
+  BetaHubWidget.<span class="function">init</span>({
+    projectId: <span class="string">'your-project-id'</span>,
+    authToken: <span class="string">'tkn-your-auth-token'</span>,
+
+    <span class="comment">// Optional configuration</span>
+    apiBaseUrl: <span class="string">'https://app.betahub.io'</span>,
+    position: <span class="string">'bottom-right'</span>, <span class="comment">// button position</span>
+    buttonText: <span class="string">'Feedback'</span>,
+
+    <span class="comment">// Custom fields (metadata sent with every submission)</span>
+    customFields: {
+      gameVersion: <span class="string">'1.0.0'</span>,
+      platform: <span class="string">'web'</span>,
+      userLevel: <span class="string">'15'</span>
+    }
+  });
+<span class="keyword">&lt;/script&gt;</span></pre>
+        </div>
+
+        <div class="canvas-demo">
+            <h2>🎮 PixiJS Game Integration Example</h2>
+            <div id="game-canvas">Your Game Canvas Here</div>
+            <p style="margin-top: 15px; color: #666;">
+                The widget renders on top of your game canvas without interfering with game rendering.
+                Users can submit feedback without leaving the game!
+            </p>
+        </div>
+
+        <div class="demo-section">
+            <h3>📦 Configuration Options</h3>
+            <p><strong>Required:</strong></p>
+            <ul style="margin-left: 20px; color: #555;">
+                <li><code>projectId</code> - Your BetaHub project ID</li>
+                <li><code>authToken</code> - Your authentication token (format: tkn-...)</li>
+            </ul>
+            <p style="margin-top: 15px;"><strong>Optional:</strong></p>
+            <ul style="margin-left: 20px; color: #555;">
+                <li><code>apiBaseUrl</code> - API endpoint (default: https://app.betahub.io)</li>
+                <li><code>position</code> - 'bottom-right', 'bottom-left', 'top-right', 'top-left' (default: 'bottom-right')</li>
+                <li><code>buttonText</code> - Custom button text (default: 'Feedback')</li>
+                <li><code>customFields</code> - Object with custom metadata to include with submissions</li>
+            </ul>
+        </div>
+
+        <div class="demo-section">
+            <h3>🔐 Getting Your Credentials</h3>
+            <p>To use this widget with your BetaHub project:</p>
+            <ol style="margin-left: 20px; color: #555; line-height: 1.8;">
+                <li>Go to your BetaHub project dashboard</li>
+                <li>Navigate to Project → Integrations → Auth Tokens</li>
+                <li>Create a new auth token with permissions for:
+                    <ul style="margin-left: 20px; margin-top: 5px;">
+                        <li>can_create_bug_report</li>
+                        <li>can_create_feature_request</li>
+                    </ul>
+                </li>
+                <li>Copy your project ID and the generated token</li>
+                <li>Use them in the widget initialization</li>
+            </ol>
+        </div>
+
+        <div class="footer">
+            <p>Made with ❤️ for BetaHub • <a href="https://betahub.io" style="color: #237390;">Visit BetaHub</a></p>
+        </div>
+    </div>
+
+    <!-- BetaHub Widget -->
+    <script src="betahub-widget.js"></script>
+    <script>
+        // Initialize the widget with demo configuration
+        BetaHubWidget.init({
+            projectId: 'demo-project',
+            authToken: 'tkn-demo-token-replace-with-real-token',
+            position: 'bottom-right',
+            buttonText: 'Feedback',
+            customFields: {
+                gameVersion: '1.0.0',
+                platform: 'web-demo',
+                demoMode: true
+            }
+        });
+
+        // Note: This demo won't actually submit to the API without valid credentials
+        // To test with real submissions, replace the projectId and authToken above
+    </script>
+</body>
+</html>
