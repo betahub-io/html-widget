@@ -12,7 +12,12 @@
  *     customFields: { gameVersion: '1.0.0' }, // optional
  *     theme: 'dark', // 'dark', 'light', or 'auto'
  *     position: 'bottom-right', // button position
- *     buttonText: 'Feedback' // button text
+ *     buttonText: 'Feedback', // button text
+ *
+ *     // Contact information options (optional)
+ *     userEmail: 'user@example.com', // pre-filled user email
+ *     requireEmail: false, // require email for bugs/suggestions (tickets always require)
+ *     showEmailField: 'auto' // 'auto', 'always', 'never'
  *   });
  * </script>
  */
@@ -27,7 +32,11 @@
       apiBaseUrl: 'https://app.betahub.io',
       customFields: {},
       position: 'bottom-right',
-      buttonText: 'Feedback'
+      buttonText: 'Feedback',
+      // Contact information options
+      userEmail: null,
+      requireEmail: false,
+      showEmailField: 'auto'  // 'auto', 'always', 'never'
     },
 
     init: function(options) {
@@ -132,6 +141,21 @@
                   ></textarea>
                   <div class="betahub-char-count">
                     <span id="betahub-steps-count">0</span> / 1000
+                  </div>
+                </div>
+
+                <!-- Email Field (conditional) -->
+                <div class="betahub-form-group" id="betahub-email-group">
+                  <label class="betahub-form-label">Email Address</label>
+                  <input
+                    type="email"
+                    id="betahub-email"
+                    class="betahub-email-input"
+                    placeholder="your.email@example.com"
+                    maxlength="255"
+                  />
+                  <div class="betahub-field-hint">
+                    We'll use this to contact you about updates
                   </div>
                 </div>
 
@@ -512,6 +536,62 @@
           color: #788087;
         }
 
+        /* Email Input */
+        .betahub-email-input {
+          width: 100%;
+          padding: 12px;
+          background: #2b2d31;
+          border: 1px solid #3a3c42;
+          border-radius: 6px;
+          color: #dbdee1;
+          font-size: 14px;
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          transition: all 0.2s;
+        }
+
+        .light-theme .betahub-email-input {
+          background: #ffffff;
+          border-color: #B1D5E2;
+          color: #2C3E50;
+        }
+
+        .betahub-email-input:focus {
+          outline: none;
+          border-color: #237390;
+        }
+
+        .light-theme .betahub-email-input:focus {
+          border-color: #A8D8EA;
+        }
+
+        .betahub-email-input::placeholder {
+          color: #5a5d64;
+        }
+
+        .light-theme .betahub-email-input::placeholder {
+          color: #788087;
+        }
+
+        .betahub-email-input:read-only {
+          background: #1a1b1e;
+          cursor: not-allowed;
+          opacity: 0.7;
+        }
+
+        .light-theme .betahub-email-input:read-only {
+          background: #F0F0F0;
+        }
+
+        .betahub-field-hint {
+          color: #5a5d64;
+          font-size: 12px;
+          margin-top: 4px;
+        }
+
+        .light-theme .betahub-field-hint {
+          color: #788087;
+        }
+
         /* Buttons */
         .betahub-button-group {
           display: flex;
@@ -669,6 +749,64 @@
 
     initializeUI: function() {
       this.currentType = 'bug';
+      this.initializeEmailField();
+      this.updateEmailFieldVisibility();
+    },
+
+    initializeEmailField: function() {
+      const emailInput = this.shadow.querySelector('#betahub-email');
+
+      // Set pre-filled email if provided
+      if (this.config.userEmail) {
+        emailInput.value = this.config.userEmail;
+
+        // Make readonly if prefilled (user can't edit)
+        emailInput.readOnly = true;
+      }
+    },
+
+    shouldShowEmailField: function() {
+      const { showEmailField, userEmail, requireEmail } = this.config;
+
+      // showEmailField = 'never' → always hide
+      if (showEmailField === 'never') {
+        return false;
+      }
+
+      // showEmailField = 'always' → always show
+      if (showEmailField === 'always') {
+        return true;
+      }
+
+      // showEmailField = 'auto' (default) → smart logic
+      // Show if email is prefilled (readonly display)
+      if (userEmail) {
+        return true;
+      }
+
+      // Show if email is required for this feedback type
+      if (this.currentType === 'support') {
+        return true;  // Tickets always need email
+      }
+
+      if (requireEmail) {
+        return true;  // Bugs/suggestions need email if configured
+      }
+
+      return false;  // Hide for anonymous bugs/suggestions
+    },
+
+    updateEmailFieldVisibility: function() {
+      const emailGroup = this.shadow.querySelector('#betahub-email-group');
+      const shouldShow = this.shouldShowEmailField();
+
+      if (shouldShow) {
+        emailGroup.classList.remove('hidden');
+      } else {
+        emailGroup.classList.add('hidden');
+      }
+
+      this.updateSubmitButton();
     },
 
     attachEventListeners: function() {
@@ -685,6 +823,7 @@
       // Character counting
       $('#betahub-description').addEventListener('input', () => this.updateCharCount());
       $('#betahub-steps').addEventListener('input', () => this.updateStepsCount());
+      $('#betahub-email').addEventListener('input', () => this.updateSubmitButton());
 
       // Submit
       $('#betahub-submit-btn').addEventListener('click', () => this.submitFeedback());
@@ -779,7 +918,8 @@
         stepsGroup.classList.add('hidden');
       }
 
-      this.updateSubmitButton();
+      // Update email field visibility based on type
+      this.updateEmailFieldVisibility();
     },
 
     updateCharCount: function() {
@@ -799,19 +939,63 @@
     updateSubmitButton: function() {
       const description = this.shadow.querySelector('#betahub-description').value.trim();
       const steps = this.shadow.querySelector('#betahub-steps').value.trim();
+      const email = this.shadow.querySelector('#betahub-email').value.trim();
+      const emailGroup = this.shadow.querySelector('#betahub-email-group');
       const submitBtn = this.shadow.querySelector('#betahub-submit-btn');
 
       const hasDescription = description.length > 0;
       const hasSteps = this.currentType !== 'bug' || steps.length > 0;
 
-      submitBtn.disabled = !(hasDescription && hasSteps);
+      // Check if email is required and valid
+      const emailVisible = !emailGroup.classList.contains('hidden');
+      const emailRequired = emailVisible && !this.config.userEmail;  // Required if shown and not prefilled
+      const hasValidEmail = !emailRequired || (email.length > 0 && this.isValidEmail(email));
+
+      submitBtn.disabled = !(hasDescription && hasSteps && hasValidEmail);
+    },
+
+    isValidEmail: function(email) {
+      // Basic email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    },
+
+    getAuthorizationHeader: function() {
+      const email = this.getUserEmail();
+
+      // If email available, include it in auth header
+      if (email) {
+        return `FormUser ${this.config.authToken},email:${email}`;
+      }
+
+      // Otherwise, just use the auth token
+      return `FormUser ${this.config.authToken}`;
+    },
+
+    getUserEmail: function() {
+      // Priority: 1) Prefilled userEmail, 2) User-entered email from form
+      if (this.config.userEmail) {
+        return this.config.userEmail;
+      }
+
+      const emailInput = this.shadow.querySelector('#betahub-email');
+      const emailGroup = this.shadow.querySelector('#betahub-email-group');
+
+      // Only get email from form if field is visible and has value
+      if (!emailGroup.classList.contains('hidden') && emailInput.value.trim()) {
+        return emailInput.value.trim();
+      }
+
+      return null;
     },
 
     handleCancel: function() {
       const description = this.shadow.querySelector('#betahub-description').value.trim();
       const steps = this.shadow.querySelector('#betahub-steps').value.trim();
+      const email = this.shadow.querySelector('#betahub-email').value.trim();
+      const hasPrefilledEmail = this.config.userEmail;
 
-      if (description || steps) {
+      if (description || steps || (email && !hasPrefilledEmail)) {
         this.showModal(this.shadow.querySelector('#betahub-cancel-modal'));
       } else {
         this.closeModal();
@@ -823,6 +1007,11 @@
       this.shadow.querySelector('#betahub-steps').value = '';
       this.shadow.querySelector('#betahub-char-count').textContent = '0';
       this.shadow.querySelector('#betahub-steps-count').textContent = '0';
+
+      // Clear email only if not prefilled
+      if (!this.config.userEmail) {
+        this.shadow.querySelector('#betahub-email').value = '';
+      }
 
       // Reset to bug type
       this.selectType('bug');
@@ -884,7 +1073,7 @@
       const response = await fetch(url, {
         method: 'POST',
         headers: {
-          'Authorization': `FormUser ${this.config.authToken}`,
+          'Authorization': this.getAuthorizationHeader(),
           'BetaHub-Project-ID': this.config.projectId,
           'Content-Type': 'application/x-www-form-urlencoded'
         },
@@ -915,7 +1104,7 @@
       const response = await fetch(url, {
         method: 'POST',
         headers: {
-          'Authorization': `FormUser ${this.config.authToken}`,
+          'Authorization': this.getAuthorizationHeader(),
           'BetaHub-Project-ID': this.config.projectId,
           'Content-Type': 'application/x-www-form-urlencoded'
         },
@@ -936,6 +1125,13 @@
       const formData = new URLSearchParams();
       formData.append('ticket[description]', description);
 
+      // Add reporter email to form data (takes precedence over header)
+      const email = this.getUserEmail();
+      if (email && !this.config.userEmail) {
+        // Only add to form if user entered it (not prefilled in header)
+        formData.append('ticket[reporter_email]', email);
+      }
+
       // Add custom fields
       if (this.config.customFields) {
         Object.keys(this.config.customFields).forEach(key => {
@@ -946,7 +1142,7 @@
       const response = await fetch(url, {
         method: 'POST',
         headers: {
-          'Authorization': `FormUser ${this.config.authToken}`,
+          'Authorization': this.getAuthorizationHeader(),
           'BetaHub-Project-ID': this.config.projectId,
           'Content-Type': 'application/x-www-form-urlencoded'
         },

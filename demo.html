@@ -249,6 +249,11 @@
     position: <span class="string">'bottom-right'</span>, <span class="comment">// button position</span>
     buttonText: <span class="string">'Feedback'</span>,
 
+    <span class="comment">// Contact information options</span>
+    userEmail: <span class="string">'user@example.com'</span>,  <span class="comment">// pre-filled email (optional)</span>
+    requireEmail: false,  <span class="comment">// require email for bugs/suggestions</span>
+    showEmailField: <span class="string">'auto'</span>,  <span class="comment">// 'auto', 'always', 'never'</span>
+
     <span class="comment">// Custom fields (metadata sent with every submission)</span>
     customFields: {
       gameVersion: <span class="string">'1.0.0'</span>,
@@ -281,6 +286,9 @@
                 <li><code>position</code> - 'bottom-right', 'bottom-left', 'top-right', 'top-left' (default: 'bottom-right')</li>
                 <li><code>buttonText</code> - Custom button text (default: 'Feedback')</li>
                 <li><code>customFields</code> - Object with custom metadata to include with submissions</li>
+                <li><code>userEmail</code> - Pre-filled user email (creates virtual user)</li>
+                <li><code>requireEmail</code> - Require email for bugs/suggestions (default: false, tickets always require)</li>
+                <li><code>showEmailField</code> - 'auto', 'always', 'never' (default: 'auto')</li>
             </ul>
         </div>
 

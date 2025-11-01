@@ -5,9 +5,11 @@ A lightweight, embeddable feedback widget for games and web applications. Allow 
 ## Features
 
 - **Three Feedback Types**: Bug reports, suggestions, and support tickets
+- **Flexible Contact Handling**: 5 different modes for capturing user email (anonymous, required, prefilled visible/hidden, auto)
+- **Virtual User Creation**: Automatically creates/links users by email without requiring full registration
 - **Zero Dependencies**: Pure vanilla JavaScript with no external libraries
 - **Shadow DOM Isolation**: Complete CSS isolation - won't conflict with your app's styles
-- **Beautiful Design**: Pastel blue minimalistic light theme
+- **Beautiful Design**: Pastel blue minimalistic light theme with dark mode support
 - **Custom Metadata**: Include game version, player level, and any custom data with submissions
 - **Responsive**: Works on desktop and mobile devices
 - **Programmable API**: Open the widget programmatically via JavaScript
@@ -15,7 +17,8 @@ A lightweight, embeddable feedback widget for games and web applications. Allow 
 
 ## Demo
 
-[View Live Demo](demo.html) - Open `demo.html` in your browser to see it in action!
+- **[View Live Demo](demo.html)** - Open `demo.html` in your browser to see it in action!
+- **[Test All Configurations](test-configurations.html)** - Interactive test suite for all 5 contact modes
 
 ## Quick Start
 
@@ -64,6 +67,9 @@ That's it! The widget will appear as a floating button in the bottom-right corne
 | `position` | string | `'bottom-right'` | Button position: `'bottom-right'`, `'bottom-left'`, `'top-right'`, `'top-left'` |
 | `buttonText` | string | `'Feedback'` | Custom text for the floating button |
 | `customFields` | object | `{}` | Custom metadata sent with every submission |
+| `userEmail` | string | `null` | Pre-filled user email (creates/links virtual user) |
+| `requireEmail` | boolean | `false` | Require email for bugs/suggestions (tickets always require) |
+| `showEmailField` | string | `'auto'` | Email field visibility: `'auto'`, `'always'`, `'never'` |
 
 ### Full Configuration Example
 
@@ -77,6 +83,11 @@ BetaHubWidget.init({
   position: 'bottom-right',
   buttonText: 'Report Bug',
 
+  // Contact information (NEW!)
+  userEmail: 'player@example.com',  // Pre-filled user email
+  requireEmail: false,               // Require email for bugs/suggestions
+  showEmailField: 'auto',            // 'auto', 'always', or 'never'
+
   // Custom fields (great for games!)
   customFields: {
     gameVersion: '1.2.3',
@@ -89,6 +100,79 @@ BetaHubWidget.init({
 ```
 
 These custom fields will be automatically included with every bug report, feature request, and support ticket submission.
+
+## Contact Information Modes
+
+The widget supports flexible contact information handling to suit different use cases:
+
+### Mode 1: Anonymous (Default)
+```javascript
+BetaHubWidget.init({
+  projectId: 'pr-123',
+  authToken: 'tkn-abc'
+  // No email config
+});
+```
+- **Bugs/Suggestions**: Anonymous (no email field)
+- **Support Tickets**: Email field shown (required)
+- **Best for**: Public feedback where user identity is optional
+
+### Mode 2: Required Email
+```javascript
+BetaHubWidget.init({
+  projectId: 'pr-123',
+  authToken: 'tkn-abc',
+  requireEmail: true
+});
+```
+- **All Types**: Email field shown and required
+- **Best for**: Tracking all feedback to specific users
+
+### Mode 3: Prefilled Visible
+```javascript
+BetaHubWidget.init({
+  projectId: 'pr-123',
+  authToken: 'tkn-abc',
+  userEmail: 'player@example.com',
+  showEmailField: 'always'
+});
+```
+- **All Types**: Email shown as readonly (user can see but not edit)
+- **Best for**: Logged-in users where email is known
+
+### Mode 4: Prefilled Hidden
+```javascript
+BetaHubWidget.init({
+  projectId: 'pr-123',
+  authToken: 'tkn-abc',
+  userEmail: 'player@example.com',
+  showEmailField: 'never'
+});
+```
+- **All Types**: Email sent in header but not visible in UI
+- **Best for**: Silent user tracking without showing email
+
+### Mode 5: Prefilled Auto (Smart Default)
+```javascript
+BetaHubWidget.init({
+  projectId: 'pr-123',
+  authToken: 'tkn-abc',
+  userEmail: 'player@example.com'
+  // showEmailField defaults to 'auto'
+});
+```
+- **All Types**: Shows readonly email field automatically when `userEmail` is provided
+- **Best for**: Most use cases (smart defaults)
+
+### How It Works
+
+When you provide `userEmail`, the widget:
+1. Sends email in the authorization header: `FormUser tkn-abc,email:user@example.com`
+2. Creates or reuses a "virtual user" in BetaHub
+3. Links all feedback from that email together
+4. Allows BetaHub to send notifications about feedback updates
+
+**Note**: Support tickets ALWAYS require contact information. If using anonymous mode, users must enter email manually for tickets.
 
 ## Programmatic API
 
@@ -185,21 +269,27 @@ function App() {
 ## Feedback Types
 
 ### Bug Reports
-- Requires: Description + Steps to Reproduce
-- Use for: Crashes, errors, unexpected behavior
-- Endpoint: `POST /projects/{projectId}/issues.json`
+- **Requires**: Description + Steps to Reproduce
+- **Email**: Optional (unless `requireEmail: true`)
+- **Use for**: Crashes, errors, unexpected behavior
+- **Endpoint**: `POST /projects/{projectId}/issues.json`
 
 ### Suggestions
-- Requires: Description only
-- Use for: Feature requests, improvements, ideas
-- Endpoint: `POST /projects/{projectId}/feature_requests.json`
+- **Requires**: Description only
+- **Email**: Optional (unless `requireEmail: true`)
+- **Use for**: Feature requests, improvements, ideas
+- **Endpoint**: `POST /projects/{projectId}/feature_requests.json`
 
 ### Support Tickets
-- Requires: Description only
-- Use for: Help requests, questions, general support
-- Endpoint: `POST /projects/{projectId}/tickets.json`
+- **Requires**: Description + Email (always required)
+- **Email**: Always required (user must provide or use prefilled)
+- **Use for**: Help requests, questions, general support
+- **Endpoint**: `POST /projects/{projectId}/tickets.json`
 
-All requests use `FormUser` authentication with your auth token.
+All requests use `FormUser` authentication with your auth token. Email can be provided via:
+- `userEmail` config (sent in header: `FormUser tkn-abc,email:user@example.com`)
+- User input in the form field
+- Form field takes precedence over header
 
 ## Character Limits
 
@@ -253,10 +343,11 @@ python3 -m http.server 8080
 
 ```
 betahub-html-widget/
-├── betahub-widget.js    # Main widget (single file, zero dependencies)
-├── demo.html            # Live demo with documentation
-├── README.md            # This file
-└── CLAUDE.md            # Development guide and architecture docs
+├── betahub-widget.js           # Main widget (single file, zero dependencies)
+├── demo.html                   # Live demo with documentation
+├── test-configurations.html    # Interactive test suite for all contact modes
+├── README.md                   # This file
+└── CLAUDE.md                   # Development guide and architecture docs
 ```
 
 ## License
