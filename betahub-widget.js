@@ -9,8 +9,8 @@
  *     projectId: 'your-project-id',
  *     authToken: 'tkn-your-token',
  *     apiBaseUrl: 'https://app.betahub.io', // optional
+ *     releaseLabel: '1.0.0', // optional - version label (auto-creates if not exists, defaults to latest release)
  *     customFields: { gameVersion: '1.0.0' }, // optional
- *     theme: 'dark', // 'dark', 'light', or 'auto'
  *     position: 'bottom-right', // button position
  *     buttonText: 'Feedback', // button text
  *
@@ -30,6 +30,7 @@
       projectId: null,
       authToken: null,
       apiBaseUrl: 'https://app.betahub.io',
+      releaseLabel: null,
       customFields: {},
       position: 'bottom-right',
       buttonText: 'Feedback',
@@ -78,7 +79,7 @@
         <style>
           ${this.getStyles()}
         </style>
-        <div class="betahub-widget light-theme">
+        <div class="betahub-widget">
           <!-- Floating Button -->
           <button class="betahub-button" id="betahub-open-btn">
             ${this.getIcon('feedback')}
@@ -291,13 +292,13 @@
         }
 
         .betahub-modal {
-          background: #1e1f22;
+          background: #ffffff;
+          box-shadow: 0 8px 32px rgba(35, 115, 144, 0.15);
           border-radius: 8px;
           width: 90%;
           max-width: 480px;
           max-height: 90vh;
           overflow-y: auto;
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
           transform: scale(0.9);
           transition: transform 0.2s, background-color 0.3s;
         }
@@ -310,42 +311,26 @@
           max-width: 400px;
         }
 
-        /* Light Theme */
-        .light-theme .betahub-modal {
-          background: #ffffff;
-          box-shadow: 0 8px 32px rgba(35, 115, 144, 0.15);
-        }
-
         /* Header */
         .betahub-header {
-          background: #111214;
+          background: #DCEFF7;
+          border-bottom: 1px solid #B1D5E2;
           padding: 16px 20px;
-          border-bottom: 1px solid #2b2d31;
           display: flex;
           justify-content: space-between;
           align-items: center;
           transition: background-color 0.3s;
         }
 
-        .light-theme .betahub-header {
-          background: #DCEFF7;
-          border-bottom: 1px solid #B1D5E2;
-        }
-
         .betahub-header h2,
         .betahub-modal-title {
-          color: #f2f3f5;
+          color: #2C3E50;
           font-size: 16px;
           font-weight: 600;
           margin: 0;
           display: flex;
           align-items: center;
           gap: 8px;
-        }
-
-        .light-theme .betahub-header h2,
-        .light-theme .betahub-modal-title {
-          color: #2C3E50;
         }
 
         /* Content */
@@ -355,57 +340,36 @@
 
         .betahub-modal-body {
           padding: 20px;
-          color: #b5bac1;
+          color: #6F7F90;
           font-size: 14px;
           line-height: 1.6;
         }
 
-        .light-theme .betahub-modal-body {
-          color: #6F7F90;
-        }
-
         .betahub-modal-footer {
           padding: 16px 20px;
-          border-top: 1px solid #2b2d31;
+          border-top: 1px solid #DCEFF7;
           display: flex;
           gap: 10px;
           justify-content: flex-end;
         }
 
-        .light-theme .betahub-modal-footer {
-          border-top-color: #DCEFF7;
-        }
-
         /* Warning Box */
         .betahub-warning-box {
-          background: #3a2f1a;
-          border: 1px solid #5c4d2c;
+          background: #FEF3E0;
+          border: 1px solid #F8C060;
           border-radius: 6px;
           padding: 12px 14px;
           margin-bottom: 20px;
         }
 
-        .light-theme .betahub-warning-box {
-          background: #FEF3E0;
-          border: 1px solid #F8C060;
-        }
-
         .betahub-warning-box p {
-          color: #f0b232;
+          color: #92400e;
           font-size: 13px;
           line-height: 1.5;
           margin: 0;
         }
 
-        .light-theme .betahub-warning-box p {
-          color: #92400e;
-        }
-
         .betahub-warning-box strong {
-          color: #ffc844;
-        }
-
-        .light-theme .betahub-warning-box strong {
           color: #78350f;
         }
 
@@ -420,16 +384,12 @@
 
         .betahub-form-label {
           display: block;
-          color: #b5bac1;
+          color: #6F7F90;
           font-size: 13px;
           font-weight: 600;
           margin-bottom: 8px;
           text-transform: uppercase;
           letter-spacing: 0.3px;
-        }
-
-        .light-theme .betahub-form-label {
-          color: #6F7F90;
         }
 
         /* Type Selector */
@@ -441,28 +401,17 @@
         .betahub-type-btn {
           flex: 1;
           padding: 14px 12px;
-          background: #2b2d31;
-          border: 2px solid #3a3c42;
+          background: #F7F9FA;
+          border: 2px solid #B1D5E2;
           border-radius: 6px;
-          color: #949ba4;
+          color: #6F7F90;
           font-size: 14px;
           font-weight: 600;
           cursor: pointer;
           transition: all 0.2s;
         }
 
-        .light-theme .betahub-type-btn {
-          background: #F7F9FA;
-          border-color: #B1D5E2;
-          color: #6F7F90;
-        }
-
         .betahub-type-btn:hover {
-          background: #35373c;
-          border-color: #4e5058;
-        }
-
-        .light-theme .betahub-type-btn:hover {
           background: #DCEFF7;
           border-color: #A8D8EA;
         }
@@ -488,36 +437,22 @@
           width: 100%;
           min-height: 120px;
           padding: 12px;
-          background: #2b2d31;
-          border: 1px solid #3a3c42;
+          background: #ffffff;
+          border: 1px solid #B1D5E2;
           border-radius: 6px;
-          color: #dbdee1;
+          color: #2C3E50;
           font-size: 14px;
           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
           resize: vertical;
           transition: all 0.2s;
         }
 
-        .light-theme textarea {
-          background: #ffffff;
-          border-color: #B1D5E2;
-          color: #2C3E50;
-        }
-
         textarea:focus {
           outline: none;
-          border-color: #237390;
-        }
-
-        .light-theme textarea:focus {
           border-color: #A8D8EA;
         }
 
         textarea::placeholder {
-          color: #5a5d64;
-        }
-
-        .light-theme textarea::placeholder {
           color: #788087;
         }
 
@@ -527,69 +462,43 @@
 
         .betahub-char-count {
           text-align: right;
-          color: #5a5d64;
+          color: #788087;
           font-size: 12px;
           margin-top: 4px;
-        }
-
-        .light-theme .betahub-char-count {
-          color: #788087;
         }
 
         /* Email Input */
         .betahub-email-input {
           width: 100%;
           padding: 12px;
-          background: #2b2d31;
-          border: 1px solid #3a3c42;
+          background: #ffffff;
+          border: 1px solid #B1D5E2;
           border-radius: 6px;
-          color: #dbdee1;
+          color: #2C3E50;
           font-size: 14px;
           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
           transition: all 0.2s;
         }
 
-        .light-theme .betahub-email-input {
-          background: #ffffff;
-          border-color: #B1D5E2;
-          color: #2C3E50;
-        }
-
         .betahub-email-input:focus {
           outline: none;
-          border-color: #237390;
-        }
-
-        .light-theme .betahub-email-input:focus {
           border-color: #A8D8EA;
         }
 
         .betahub-email-input::placeholder {
-          color: #5a5d64;
-        }
-
-        .light-theme .betahub-email-input::placeholder {
           color: #788087;
         }
 
         .betahub-email-input:read-only {
-          background: #1a1b1e;
+          background: #F0F0F0;
           cursor: not-allowed;
           opacity: 0.7;
         }
 
-        .light-theme .betahub-email-input:read-only {
-          background: #F0F0F0;
-        }
-
         .betahub-field-hint {
-          color: #5a5d64;
+          color: #788087;
           font-size: 12px;
           margin-top: 4px;
-        }
-
-        .light-theme .betahub-field-hint {
-          color: #788087;
         }
 
         /* Buttons */
@@ -598,11 +507,7 @@
           gap: 10px;
           margin-top: 20px;
           padding-top: 20px;
-          border-top: 1px solid #2b2d31;
-        }
-
-        .light-theme .betahub-button-group {
-          border-top-color: #DCEFF7;
+          border-top: 1px solid #DCEFF7;
         }
 
         .betahub-btn {
@@ -630,32 +535,18 @@
         }
 
         .betahub-btn-primary:disabled {
-          background: #3a3c42;
-          color: #5a5d64;
-          cursor: not-allowed;
-        }
-
-        .light-theme .betahub-btn-primary:disabled {
           background: #B1D5E2;
           color: #788087;
+          cursor: not-allowed;
         }
 
         .betahub-btn-secondary {
           background: transparent;
-          color: #949ba4;
+          color: #6F7F90;
           padding: 12px 16px;
         }
 
-        .light-theme .betahub-btn-secondary {
-          color: #6F7F90;
-        }
-
         .betahub-btn-secondary:hover {
-          background: #2b2d31;
-          color: #dbdee1;
-        }
-
-        .light-theme .betahub-btn-secondary:hover {
           background: #DCEFF7;
           color: #2C3E50;
         }
@@ -680,26 +571,17 @@
 
         /* Error Box */
         .betahub-error-box {
-          background: #3d1e1e;
-          border: 1px solid #5c2626;
+          background: #FEEDED;
+          border: 1px solid #F47C7C;
           border-radius: 6px;
           padding: 12px;
           margin-top: 12px;
         }
 
-        .light-theme .betahub-error-box {
-          background: #FEEDED;
-          border-color: #F47C7C;
-        }
-
         .betahub-error-box p {
-          color: #f87171;
+          color: #E75555;
           font-size: 13px;
           margin: 0;
-        }
-
-        .light-theme .betahub-error-box p {
-          color: #E75555;
         }
 
         /* Scrollbar Styling */
@@ -708,20 +590,12 @@
         }
 
         .betahub-modal::-webkit-scrollbar-track {
-          background: #1e1f22;
-        }
-
-        .betahub-modal::-webkit-scrollbar-thumb {
-          background: #3a3c42;
-          border-radius: 4px;
-        }
-
-        .light-theme .betahub-modal::-webkit-scrollbar-track {
           background: #F7F9FA;
         }
 
-        .light-theme .betahub-modal::-webkit-scrollbar-thumb {
+        .betahub-modal::-webkit-scrollbar-thumb {
           background: #B1D5E2;
+          border-radius: 4px;
         }
       `;
     },
@@ -1062,6 +936,11 @@
       formData.append('issue[description]', description);
       formData.append('issue[unformatted_steps_to_reproduce]', steps);
       formData.append('issue[source]', 'betahub-widget');
+
+      // Add release label if provided
+      if (this.config.releaseLabel) {
+        formData.append('issue[release_label]', this.config.releaseLabel);
+      }
 
       // Add custom fields
       if (this.config.customFields) {

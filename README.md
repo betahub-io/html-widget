@@ -9,7 +9,7 @@ A lightweight, embeddable feedback widget for games and web applications. Allow 
 - **Virtual User Creation**: Automatically creates/links users by email without requiring full registration
 - **Zero Dependencies**: Pure vanilla JavaScript with no external libraries
 - **Shadow DOM Isolation**: Complete CSS isolation - won't conflict with your app's styles
-- **Beautiful Design**: Pastel blue minimalistic light theme with dark mode support
+- **Beautiful Design**: Pastel blue minimalistic light theme
 - **Custom Metadata**: Include game version, player level, and any custom data with submissions
 - **Responsive**: Works on desktop and mobile devices
 - **Programmable API**: Open the widget programmatically via JavaScript
@@ -18,7 +18,6 @@ A lightweight, embeddable feedback widget for games and web applications. Allow 
 ## Demo
 
 - **[View Live Demo](demo.html)** - Open `demo.html` in your browser to see it in action!
-- **[Test All Configurations](test-configurations.html)** - Interactive test suite for all 5 contact modes
 
 ## Quick Start
 
@@ -64,6 +63,7 @@ That's it! The widget will appear as a floating button in the bottom-right corne
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `apiBaseUrl` | string | `'https://app.betahub.io'` | BetaHub API endpoint |
+| `releaseLabel` | string | `null` | Version label for bug reports (auto-creates release if doesn't exist). If not provided, bugs are assigned to the project's latest release |
 | `position` | string | `'bottom-right'` | Button position: `'bottom-right'`, `'bottom-left'`, `'top-right'`, `'top-left'` |
 | `buttonText` | string | `'Feedback'` | Custom text for the floating button |
 | `customFields` | object | `{}` | Custom metadata sent with every submission |
@@ -80,6 +80,7 @@ BetaHubWidget.init({
 
   // Optional configuration
   apiBaseUrl: 'https://app.betahub.io',
+  releaseLabel: '1.2.3',             // Version label (auto-creates release if not exists)
   position: 'bottom-right',
   buttonText: 'Report Bug',
 
@@ -90,7 +91,6 @@ BetaHubWidget.init({
 
   // Custom fields (great for games!)
   customFields: {
-    gameVersion: '1.2.3',
     platform: 'web',
     playerLevel: 15,
     currentScene: 'battle-arena',
@@ -345,7 +345,6 @@ python3 -m http.server 8080
 betahub-html-widget/
 ├── betahub-widget.js           # Main widget (single file, zero dependencies)
 ├── demo.html                   # Live demo with documentation
-├── test-configurations.html    # Interactive test suite for all contact modes
 ├── README.md                   # This file
 └── CLAUDE.md                   # Development guide and architecture docs
 ```
