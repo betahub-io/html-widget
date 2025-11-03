@@ -1,5 +1,4 @@
 .playwright-mcp
-.claude
 Makefile
 
 # Test server artifacts
