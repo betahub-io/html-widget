@@ -25,6 +25,142 @@
 (function(window) {
   'use strict';
 
+  // Theme Definitions
+  const THEMES = {
+    'pastel-blue': {
+      '--primary-button': '#237390',
+      '--primary-button-hover': '#1E627B',
+      '--primary-button-active': '#144252',
+      '--primary-button-disabled-bg': '#B1D5E2',
+      '--primary-button-disabled-text': '#788087',
+      '--header-bg': '#DCEFF7',
+      '--modal-bg': '#FFFFFF',
+      '--modal-border': '#B1D5E2',
+      '--content-bg': '#FFFFFF',
+      '--alt-bg': '#F7F9FA',
+      '--text-primary': '#2C3E50',
+      '--text-secondary': '#6F7F90',
+      '--text-disabled': '#788087',
+      '--border-color': '#B1D5E2',
+      '--border-top-color': '#DCEFF7',
+      '--input-bg': '#FFFFFF',
+      '--input-border': '#B1D5E2',
+      '--input-focus-border': '#A8D8EA',
+      '--type-btn-bg': '#F7F9FA',
+      '--type-btn-border': '#B1D5E2',
+      '--type-btn-hover-bg': '#DCEFF7',
+      '--type-btn-hover-border': '#A8D8EA',
+      '--type-btn-active-bug': '#F47C7C',
+      '--type-btn-active-suggestion': '#58CEA7',
+      '--type-btn-active-support': '#237390',
+      '--success-color': '#58CEA7',
+      '--success-hover': '#3FB88F',
+      '--warning-bg': '#FEF3E0',
+      '--warning-border': '#F8C060',
+      '--warning-text': '#92400e',
+      '--warning-text-strong': '#78350f',
+      '--error-color': '#F47C7C',
+      '--error-hover': '#F05B5B',
+      '--error-bg': '#FEEDED',
+      '--error-border': '#F47C7C',
+      '--error-text': '#E75555',
+      '--scrollbar-track': '#F7F9FA',
+      '--scrollbar-thumb': '#B1D5E2',
+      '--overlay-bg': 'rgba(0, 0, 0, 0.7)',
+      '--shadow-button': 'rgba(35, 115, 144, 0.3)',
+      '--shadow-button-hover': 'rgba(35, 115, 144, 0.4)',
+      '--shadow-modal': 'rgba(35, 115, 144, 0.15)'
+    },
+    'light': {
+      '--primary-button': '#0a714e',
+      '--primary-button-hover': '#085e41',
+      '--primary-button-active': '#06422e',
+      '--primary-button-disabled-bg': '#D1D5DB',
+      '--primary-button-disabled-text': '#9CA3AF',
+      '--header-bg': '#E8F5F1',
+      '--modal-bg': '#FFFFFF',
+      '--modal-border': '#D1D5DB',
+      '--content-bg': '#FFFFFF',
+      '--alt-bg': '#F7F9FA',
+      '--text-primary': '#1F2937',
+      '--text-secondary': '#6B7280',
+      '--text-disabled': '#9CA3AF',
+      '--border-color': '#D1D5DB',
+      '--border-top-color': '#E8F5F1',
+      '--input-bg': '#FFFFFF',
+      '--input-border': '#D1D5DB',
+      '--input-focus-border': '#10B981',
+      '--type-btn-bg': '#F7F9FA',
+      '--type-btn-border': '#D1D5DB',
+      '--type-btn-hover-bg': '#E8F5F1',
+      '--type-btn-hover-border': '#10B981',
+      '--type-btn-active-bug': '#EF4444',
+      '--type-btn-active-suggestion': '#10B981',
+      '--type-btn-active-support': '#0a714e',
+      '--success-color': '#10B981',
+      '--success-hover': '#059669',
+      '--warning-bg': '#FEF3C7',
+      '--warning-border': '#F59E0B',
+      '--warning-text': '#92400e',
+      '--warning-text-strong': '#78350f',
+      '--error-color': '#EF4444',
+      '--error-hover': '#DC2626',
+      '--error-bg': '#FEE2E2',
+      '--error-border': '#EF4444',
+      '--error-text': '#DC2626',
+      '--scrollbar-track': '#F7F9FA',
+      '--scrollbar-thumb': '#D1D5DB',
+      '--overlay-bg': 'rgba(0, 0, 0, 0.7)',
+      '--shadow-button': 'rgba(16, 185, 129, 0.3)',
+      '--shadow-button-hover': 'rgba(16, 185, 129, 0.4)',
+      '--shadow-modal': 'rgba(16, 185, 129, 0.15)'
+    },
+    'dark': {
+      '--primary-button': '#10B981',
+      '--primary-button-hover': '#14eba3',
+      '--primary-button-active': '#0c8d62',
+      '--primary-button-disabled-bg': '#374151',
+      '--primary-button-disabled-text': '#6B7280',
+      '--header-bg': '#1F2937',
+      '--modal-bg': '#111827',
+      '--modal-border': '#4B5563',
+      '--content-bg': '#111827',
+      '--alt-bg': '#374151',
+      '--text-primary': '#F3F4F6',
+      '--text-secondary': '#9CA3AF',
+      '--text-disabled': '#6B7280',
+      '--border-color': '#4B5563',
+      '--border-top-color': '#374151',
+      '--input-bg': '#1F2937',
+      '--input-border': '#4B5563',
+      '--input-focus-border': '#10B981',
+      '--type-btn-bg': '#374151',
+      '--type-btn-border': '#4B5563',
+      '--type-btn-hover-bg': '#1F2937',
+      '--type-btn-hover-border': '#10B981',
+      '--type-btn-active-bug': '#F87171',
+      '--type-btn-active-suggestion': '#10B981',
+      '--type-btn-active-support': '#10B981',
+      '--success-color': '#10B981',
+      '--success-hover': '#059669',
+      '--warning-bg': '#451A03',
+      '--warning-border': '#FBBF24',
+      '--warning-text': '#FCD34D',
+      '--warning-text-strong': '#FEF3C7',
+      '--error-color': '#F87171',
+      '--error-hover': '#EF4444',
+      '--error-bg': '#450A0A',
+      '--error-border': '#F87171',
+      '--error-text': '#FCA5A5',
+      '--scrollbar-track': '#374151',
+      '--scrollbar-thumb': '#4B5563',
+      '--overlay-bg': 'rgba(0, 0, 0, 0.8)',
+      '--shadow-button': 'rgba(16, 185, 129, 0.3)',
+      '--shadow-button-hover': 'rgba(16, 185, 129, 0.4)',
+      '--shadow-modal': 'rgba(0, 0, 0, 0.5)'
+    }
+  };
+
   const BetaHubWidget = {
     config: {
       projectId: null,
@@ -37,7 +173,10 @@
       // Contact information options
       userEmail: null,
       requireEmail: false,
-      showEmailField: 'auto'  // 'auto', 'always', 'never'
+      showEmailField: 'auto',  // 'auto', 'always', 'never'
+      // Theme options
+      theme: 'pastel-blue',  // 'pastel-blue', 'light', 'dark'
+      styleOverrides: {}  // CSS variables to override theme colors
     },
 
     init: function(options) {
@@ -69,9 +208,41 @@
       this.shadow = shadow;
       this.container = container;
 
+      // Apply theme
+      this.applyTheme();
+
       // Initialize
       this.initializeUI();
       this.attachEventListeners();
+    },
+
+    applyTheme: function() {
+      // Validate theme exists
+      const themeName = this.config.theme || 'pastel-blue';
+      if (!THEMES[themeName]) {
+        console.warn(`BetaHub Widget: Theme "${themeName}" not found, falling back to "pastel-blue"`);
+        this.config.theme = 'pastel-blue';
+      }
+
+      // Get theme colors
+      const themeColors = THEMES[this.config.theme] || THEMES['pastel-blue'];
+
+      // Merge with user overrides
+      const finalColors = Object.assign({}, themeColors, this.config.styleOverrides);
+
+      // Apply CSS variables to shadow root
+      const style = document.createElement('style');
+      const cssVars = Object.entries(finalColors)
+        .map(([key, value]) => `${key}: ${value};`)
+        .join('\n    ');
+
+      style.textContent = `
+        :host {
+          ${cssVars}
+        }
+      `;
+
+      this.shadow.appendChild(style);
     },
 
     getTemplate: function() {
@@ -237,7 +408,7 @@
           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
           font-size: 14px;
           line-height: 1.5;
-          color: #dbdee1;
+          color: var(--text-primary);
           position: relative;
           z-index: 999999;
         }
@@ -247,7 +418,7 @@
           position: fixed;
           ${buttonPosition.vertical}: 20px;
           ${buttonPosition.horizontal}: 20px;
-          background: #237390;
+          background: var(--primary-button);
           color: #ffffff;
           border: none;
           border-radius: 24px;
@@ -255,7 +426,7 @@
           font-size: 14px;
           font-weight: 600;
           cursor: pointer;
-          box-shadow: 0 4px 12px rgba(35, 115, 144, 0.3);
+          box-shadow: 0 4px 12px var(--shadow-button);
           transition: all 0.2s;
           display: flex;
           align-items: center;
@@ -264,9 +435,9 @@
         }
 
         .betahub-button:hover {
-          background: #1E627B;
+          background: var(--primary-button-hover);
           transform: translateY(-2px);
-          box-shadow: 0 6px 16px rgba(35, 115, 144, 0.4);
+          box-shadow: 0 6px 16px var(--shadow-button-hover);
         }
 
         /* Modal Overlay */
@@ -276,7 +447,7 @@
           left: 0;
           right: 0;
           bottom: 0;
-          background: rgba(0, 0, 0, 0.7);
+          background: var(--overlay-bg);
           display: flex;
           justify-content: center;
           align-items: center;
@@ -292,8 +463,8 @@
         }
 
         .betahub-modal {
-          background: #ffffff;
-          box-shadow: 0 8px 32px rgba(35, 115, 144, 0.15);
+          background: var(--modal-bg);
+          box-shadow: 0 8px 32px var(--shadow-modal);
           border-radius: 8px;
           width: 90%;
           max-width: 480px;
@@ -313,8 +484,8 @@
 
         /* Header */
         .betahub-header {
-          background: #DCEFF7;
-          border-bottom: 1px solid #B1D5E2;
+          background: var(--header-bg);
+          border-bottom: 1px solid var(--modal-border);
           padding: 16px 20px;
           display: flex;
           justify-content: space-between;
@@ -324,7 +495,7 @@
 
         .betahub-header h2,
         .betahub-modal-title {
-          color: #2C3E50;
+          color: var(--text-primary);
           font-size: 16px;
           font-weight: 600;
           margin: 0;
@@ -340,14 +511,14 @@
 
         .betahub-modal-body {
           padding: 20px;
-          color: #6F7F90;
+          color: var(--text-secondary);
           font-size: 14px;
           line-height: 1.6;
         }
 
         .betahub-modal-footer {
           padding: 16px 20px;
-          border-top: 1px solid #DCEFF7;
+          border-top: 1px solid var(--border-top-color);
           display: flex;
           gap: 10px;
           justify-content: flex-end;
@@ -355,22 +526,22 @@
 
         /* Warning Box */
         .betahub-warning-box {
-          background: #FEF3E0;
-          border: 1px solid #F8C060;
+          background: var(--warning-bg);
+          border: 1px solid var(--warning-border);
           border-radius: 6px;
           padding: 12px 14px;
           margin-bottom: 20px;
         }
 
         .betahub-warning-box p {
-          color: #92400e;
+          color: var(--warning-text);
           font-size: 13px;
           line-height: 1.5;
           margin: 0;
         }
 
         .betahub-warning-box strong {
-          color: #78350f;
+          color: var(--warning-text-strong);
         }
 
         /* Form Groups */
@@ -384,7 +555,7 @@
 
         .betahub-form-label {
           display: block;
-          color: #6F7F90;
+          color: var(--text-secondary);
           font-size: 13px;
           font-weight: 600;
           margin-bottom: 8px;
@@ -401,10 +572,10 @@
         .betahub-type-btn {
           flex: 1;
           padding: 14px 12px;
-          background: #F7F9FA;
-          border: 2px solid #B1D5E2;
+          background: var(--type-btn-bg);
+          border: 2px solid var(--type-btn-border);
           border-radius: 6px;
-          color: #6F7F90;
+          color: var(--text-secondary);
           font-size: 14px;
           font-weight: 600;
           cursor: pointer;
@@ -412,24 +583,24 @@
         }
 
         .betahub-type-btn:hover {
-          background: #DCEFF7;
-          border-color: #A8D8EA;
+          background: var(--type-btn-hover-bg);
+          border-color: var(--type-btn-hover-border);
         }
 
         .betahub-type-btn.active {
-          background: #F47C7C;
-          border-color: #F47C7C;
+          background: var(--type-btn-active-bug);
+          border-color: var(--type-btn-active-bug);
           color: #ffffff;
         }
 
         .betahub-type-btn[data-type="suggestion"].active {
-          background: #58CEA7;
-          border-color: #58CEA7;
+          background: var(--type-btn-active-suggestion);
+          border-color: var(--type-btn-active-suggestion);
         }
 
         .betahub-type-btn[data-type="support"].active {
-          background: #237390;
-          border-color: #237390;
+          background: var(--type-btn-active-support);
+          border-color: var(--type-btn-active-support);
         }
 
         /* Textarea */
@@ -437,10 +608,10 @@
           width: 100%;
           min-height: 120px;
           padding: 12px;
-          background: #ffffff;
-          border: 1px solid #B1D5E2;
+          background: var(--input-bg);
+          border: 1px solid var(--input-border);
           border-radius: 6px;
-          color: #2C3E50;
+          color: var(--text-primary);
           font-size: 14px;
           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
           resize: vertical;
@@ -449,11 +620,11 @@
 
         textarea:focus {
           outline: none;
-          border-color: #A8D8EA;
+          border-color: var(--input-focus-border);
         }
 
         textarea::placeholder {
-          color: #788087;
+          color: var(--text-disabled);
         }
 
         .betahub-steps-textarea {
@@ -462,7 +633,7 @@
 
         .betahub-char-count {
           text-align: right;
-          color: #788087;
+          color: var(--text-disabled);
           font-size: 12px;
           margin-top: 4px;
         }
@@ -471,10 +642,10 @@
         .betahub-email-input {
           width: 100%;
           padding: 12px;
-          background: #ffffff;
-          border: 1px solid #B1D5E2;
+          background: var(--input-bg);
+          border: 1px solid var(--input-border);
           border-radius: 6px;
-          color: #2C3E50;
+          color: var(--text-primary);
           font-size: 14px;
           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
           transition: all 0.2s;
@@ -482,21 +653,21 @@
 
         .betahub-email-input:focus {
           outline: none;
-          border-color: #A8D8EA;
+          border-color: var(--input-focus-border);
         }
 
         .betahub-email-input::placeholder {
-          color: #788087;
+          color: var(--text-disabled);
         }
 
         .betahub-email-input:read-only {
-          background: #F0F0F0;
+          background: var(--alt-bg);
           cursor: not-allowed;
           opacity: 0.7;
         }
 
         .betahub-field-hint {
-          color: #788087;
+          color: var(--text-disabled);
           font-size: 12px;
           margin-top: 4px;
         }
@@ -507,7 +678,7 @@
           gap: 10px;
           margin-top: 20px;
           padding-top: 20px;
-          border-top: 1px solid #DCEFF7;
+          border-top: 1px solid var(--border-top-color);
         }
 
         .betahub-btn {
@@ -522,64 +693,64 @@
 
         .betahub-btn-primary {
           flex: 1;
-          background: #237390;
+          background: var(--primary-button);
           color: #ffffff;
         }
 
         .betahub-btn-primary:hover:not(:disabled) {
-          background: #1E627B;
+          background: var(--primary-button-hover);
         }
 
         .betahub-btn-primary:active:not(:disabled) {
-          background: #144252;
+          background: var(--primary-button-active);
         }
 
         .betahub-btn-primary:disabled {
-          background: #B1D5E2;
-          color: #788087;
+          background: var(--primary-button-disabled-bg);
+          color: var(--primary-button-disabled-text);
           cursor: not-allowed;
         }
 
         .betahub-btn-secondary {
           background: transparent;
-          color: #6F7F90;
+          color: var(--text-secondary);
           padding: 12px 16px;
         }
 
         .betahub-btn-secondary:hover {
-          background: #DCEFF7;
-          color: #2C3E50;
+          background: var(--type-btn-hover-bg);
+          color: var(--text-primary);
         }
 
         .betahub-btn-danger {
-          background: #F47C7C;
+          background: var(--error-color);
           color: #ffffff;
         }
 
         .betahub-btn-danger:hover {
-          background: #F05B5B;
+          background: var(--error-hover);
         }
 
         .betahub-btn-success {
-          background: #58CEA7;
+          background: var(--success-color);
           color: #ffffff;
         }
 
         .betahub-btn-success:hover {
-          background: #3FB88F;
+          background: var(--success-hover);
         }
 
         /* Error Box */
         .betahub-error-box {
-          background: #FEEDED;
-          border: 1px solid #F47C7C;
+          background: var(--error-bg);
+          border: 1px solid var(--error-border);
           border-radius: 6px;
           padding: 12px;
           margin-top: 12px;
         }
 
         .betahub-error-box p {
-          color: #E75555;
+          color: var(--error-text);
           font-size: 13px;
           margin: 0;
         }
@@ -590,11 +761,11 @@
         }
 
         .betahub-modal::-webkit-scrollbar-track {
-          background: #F7F9FA;
+          background: var(--scrollbar-track);
         }
 
         .betahub-modal::-webkit-scrollbar-thumb {
-          background: #B1D5E2;
+          background: var(--scrollbar-thumb);
           border-radius: 4px;
         }
       `;

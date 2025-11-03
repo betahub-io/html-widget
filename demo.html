@@ -323,6 +323,8 @@
             authToken: 'tkn-15e6fbc1470613d5cfd2199edbde52157379b8c6dcd365441eabf8fea62d76a7',
             position: 'bottom-right',
             buttonText: 'Feedback',
+            theme: 'light', // Available themes: 'pastel-blue', 'light', 'dark'
+            // styleOverrides: { '--primary-button': '#FF5733' }, // Optional: override any CSS variable
             customFields: {
                 gameVersion: '1.0.0',
                 platform: 'web-demo',
@@ -332,6 +334,30 @@
 
         // Note: This demo is configured with BetaHub demo project credentials
         // Submissions will be sent to: https://app.betahub.io/projects/pr-5287510306
+
+        // Theme switcher example:
+        // To change themes dynamically, you need to reinitialize the widget
+        window.switchTheme = function(theme) {
+            // Remove old widget
+            const oldContainer = document.getElementById('betahub-widget-container');
+            if (oldContainer) {
+                oldContainer.remove();
+            }
+
+            // Reinitialize with new theme
+            BetaHubWidget.init({
+                projectId: 'pr-5287510306',
+                authToken: 'tkn-15e6fbc1470613d5cfd2199edbde52157379b8c6dcd365441eabf8fea62d76a7',
+                position: 'bottom-right',
+                buttonText: 'Feedback',
+                theme: theme,
+                customFields: {
+                    gameVersion: '1.0.0',
+                    platform: 'web-demo',
+                    demoMode: true
+                }
+            });
+        };
     </script>
 </body>
 </html>
