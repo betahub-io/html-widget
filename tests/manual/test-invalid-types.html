@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test: Invalid Types - BetaHub Widget</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background: #f0f0f0;
+        }
+        h1 { color: #333; }
+        .info {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="info">
+        <h1>Test: Invalid Types</h1>
+        <p><strong>Configuration:</strong> <code>enabledTypes: ['bug', 'invalid-type', 'suggestion']</code></p>
+        <p><strong>Expected:</strong> Warning in console about invalid type, only Bug and Suggestion shown</p>
+        <p>Open browser console and click the feedback button!</p>
+    </div>
+
+    <!-- BetaHub Widget -->
+    <script src="../../betahub-widget.js"></script>
+    <script>
+        BetaHubWidget.init({
+            projectId: 'pr-5287510306',
+            authToken: 'tkn-15e6fbc1470613d5cfd2199edbde52157379b8c6dcd365441eabf8fea62d76a7',
+            position: 'bottom-right',
+            enabledTypes: ['bug', 'invalid-type', 'suggestion']  // Mix of valid and invalid
+        });
+    </script>
+</body>
+</html>

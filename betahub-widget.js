@@ -176,8 +176,14 @@
       showEmailField: 'auto',  // 'auto', 'always', 'never'
       // Theme options
       theme: 'pastel-blue',  // 'pastel-blue', 'light', 'dark'
-      styleOverrides: {}  // CSS variables to override theme colors
+      styleOverrides: {},  // CSS variables to override theme colors
+      // Feedback type options
+      enabledTypes: ['bug', 'suggestion', 'support']  // Array of enabled feedback types
     },
+
+    // Internal state
+    validatedTypes: [],
+    configError: null,
 
     init: function(options) {
       if (!options.projectId || !options.authToken) {
@@ -188,8 +194,75 @@
       // Merge config
       this.config = Object.assign({}, this.config, options);
 
+      // Validate enabledTypes configuration
+      this.validateEnabledTypes();
+
       // Create widget
       this.createWidget();
+    },
+
+    validateEnabledTypes: function() {
+      const VALID_TYPES = ['bug', 'suggestion', 'support'];
+      const enabledTypes = this.config.enabledTypes;
+
+      // Check if enabledTypes is an array
+      if (!Array.isArray(enabledTypes)) {
+        this.configError = {
+          title: 'Configuration Error: Invalid enabledTypes',
+          message: `The 'enabledTypes' option must be an array of strings. Received: ${typeof enabledTypes}`,
+          fix: `Change to: enabledTypes: ['bug', 'suggestion', 'support']`
+        };
+        console.error('BetaHub Widget Configuration Error:', this.configError.message);
+        console.error('Fix:', this.configError.fix);
+        return;
+      }
+
+      // Check if array is empty
+      if (enabledTypes.length === 0) {
+        this.configError = {
+          title: 'Configuration Error: No Feedback Types Enabled',
+          message: `The 'enabledTypes' array is empty. At least one feedback type must be enabled.`,
+          fix: `Add at least one type: enabledTypes: ['bug'] or ['suggestion'] or ['support']`
+        };
+        console.error('BetaHub Widget Configuration Error:', this.configError.message);
+        console.error('Fix:', this.configError.fix);
+        return;
+      }
+
+      // Filter valid types and warn about invalid ones
+      const validTypes = [];
+      const invalidTypes = [];
+
+      enabledTypes.forEach(type => {
+        if (VALID_TYPES.includes(type)) {
+          validTypes.push(type);
+        } else {
+          invalidTypes.push(type);
+        }
+      });
+
+      // Warn about invalid types
+      if (invalidTypes.length > 0) {
+        console.warn(`BetaHub Widget: Invalid feedback type(s) ignored: ${invalidTypes.join(', ')}`);
+        console.warn(`Valid types are: ${VALID_TYPES.join(', ')}`);
+      }
+
+      // Check if all types were invalid
+      if (validTypes.length === 0) {
+        this.configError = {
+          title: 'Configuration Error: No Valid Feedback Types',
+          message: `All specified feedback types are invalid: ${invalidTypes.join(', ')}`,
+          fix: `Use valid types: enabledTypes: ['bug', 'suggestion', 'support']`
+        };
+        console.error('BetaHub Widget Configuration Error:', this.configError.message);
+        console.error('Valid types:', VALID_TYPES.join(', '));
+        console.error('Fix:', this.configError.fix);
+        return;
+      }
+
+      // Store validated types
+      this.validatedTypes = validTypes;
+      console.log('BetaHub Widget: Enabled feedback types:', validTypes.join(', '));
     },
 
     createWidget: function() {
@@ -273,8 +346,16 @@
                   Please submit only ONE item per form. If you have multiple items, submit them separately.</p>
                 </div>
 
-                <!-- Feedback Type Selector -->
-                <div class="betahub-form-group">
+                <!-- Single Type Indicator (shown when only one type is enabled) -->
+                <div class="betahub-form-group betahub-single-type-indicator hidden" id="betahub-single-type-indicator">
+                  <label class="betahub-form-label">Feedback Type</label>
+                  <div class="betahub-type-badge" id="betahub-type-badge">
+                    <span id="betahub-type-badge-text">Bug Report</span>
+                  </div>
+                </div>
+
+                <!-- Feedback Type Selector (shown when multiple types are enabled) -->
+                <div class="betahub-form-group" id="betahub-type-selector-group">
                   <label class="betahub-form-label">Feedback Type</label>
                   <div class="betahub-type-selector">
                     <button class="betahub-type-btn active" data-type="bug">
@@ -386,6 +467,25 @@
               <div class="betahub-modal-footer">
                 <button class="betahub-btn betahub-btn-secondary" id="betahub-cancel-no">No, Keep Writing</button>
                 <button class="betahub-btn betahub-btn-danger" id="betahub-cancel-yes">Yes, Discard</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Configuration Error Modal -->
+          <div class="betahub-modal-overlay" id="betahub-config-error-modal">
+            <div class="betahub-modal betahub-small-modal">
+              <div class="betahub-header">
+                <h3 class="betahub-modal-title" id="betahub-config-error-title">⚙️ Configuration Error</h3>
+              </div>
+              <div class="betahub-modal-body">
+                <p id="betahub-config-error-message">There is a configuration error.</p>
+                <div class="betahub-error-box">
+                  <strong>How to fix:</strong>
+                  <p id="betahub-config-error-fix">Check your configuration.</p>
+                </div>
+              </div>
+              <div class="betahub-modal-footer">
+                <button class="betahub-btn betahub-btn-primary" id="betahub-config-error-close">Close</button>
               </div>
             </div>
           </div>
@@ -603,6 +703,36 @@
           border-color: var(--type-btn-active-support);
         }
 
+        /* Single Type Badge */
+        .betahub-type-badge {
+          display: inline-flex;
+          align-items: center;
+          padding: 10px 16px;
+          background: var(--type-btn-bg);
+          border: 2px solid var(--type-btn-border);
+          border-radius: 6px;
+          font-size: 14px;
+          font-weight: 600;
+        }
+
+        .betahub-type-badge.type-bug {
+          background: var(--type-btn-active-bug);
+          border-color: var(--type-btn-active-bug);
+          color: #ffffff;
+        }
+
+        .betahub-type-badge.type-suggestion {
+          background: var(--type-btn-active-suggestion);
+          border-color: var(--type-btn-active-suggestion);
+          color: #ffffff;
+        }
+
+        .betahub-type-badge.type-support {
+          background: var(--type-btn-active-support);
+          border-color: var(--type-btn-active-support);
+          color: #ffffff;
+        }
+
         /* Textarea */
         textarea {
           width: 100%;
@@ -793,8 +923,82 @@
     },
 
     initializeUI: function() {
-      this.currentType = 'bug';
+      // Determine initial type based on enabled types
+      const isSingleType = this.validatedTypes.length === 1;
+
+      if (isSingleType) {
+        // Auto-select the only enabled type
+        this.currentType = this.validatedTypes[0];
+        this.showSingleTypeMode();
+      } else {
+        // Default to first enabled type (or 'bug' if available)
+        this.currentType = this.validatedTypes.includes('bug') ? 'bug' : this.validatedTypes[0];
+        this.showMultiTypeMode();
+      }
+
       this.initializeEmailField();
+      this.updateEmailFieldVisibility();
+    },
+
+    showSingleTypeMode: function() {
+      // Hide both type selector and type indicator
+      const selectorGroup = this.shadow.querySelector('#betahub-type-selector-group');
+      const indicator = this.shadow.querySelector('#betahub-single-type-indicator');
+
+      selectorGroup.classList.add('hidden');
+      indicator.classList.add('hidden');
+
+      // Update form for the selected type
+      this.updateFormForType(this.currentType);
+    },
+
+    showMultiTypeMode: function() {
+      // Show type selector, hide type badge
+      const selectorGroup = this.shadow.querySelector('#betahub-type-selector-group');
+      const indicator = this.shadow.querySelector('#betahub-single-type-indicator');
+
+      selectorGroup.classList.remove('hidden');
+      indicator.classList.add('hidden');
+
+      // Hide/show type buttons based on enabled types
+      const typeButtons = this.shadow.querySelectorAll('.betahub-type-btn');
+      typeButtons.forEach(btn => {
+        const type = btn.dataset.type;
+        if (this.validatedTypes.includes(type)) {
+          btn.style.display = '';
+          if (type === this.currentType) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        } else {
+          btn.style.display = 'none';
+        }
+      });
+
+      // Update form for the selected type
+      this.updateFormForType(this.currentType);
+    },
+
+    updateFormForType: function(type) {
+      // Update placeholders
+      const placeholders = {
+        bug: 'Describe the bug you encountered...',
+        suggestion: 'Describe your suggestion in detail...',
+        support: 'What do you need help with?'
+      };
+
+      this.shadow.querySelector('#betahub-description').placeholder = placeholders[type];
+
+      // Show/hide steps field for bugs
+      const stepsGroup = this.shadow.querySelector('#betahub-steps-group');
+      if (type === 'bug') {
+        stepsGroup.classList.remove('hidden');
+      } else {
+        stepsGroup.classList.add('hidden');
+      }
+
+      // Update email field visibility based on type
       this.updateEmailFieldVisibility();
     },
 
@@ -894,12 +1098,16 @@
         this.submitFeedback();
       });
 
+      // Config Error
+      $('#betahub-config-error-close').addEventListener('click', () => this.hideModal($('#betahub-config-error-modal')));
+
       // Close on overlay click
       [
         $('#betahub-modal'),
         $('#betahub-success-modal'),
         $('#betahub-error-modal'),
-        $('#betahub-cancel-modal')
+        $('#betahub-cancel-modal'),
+        $('#betahub-config-error-modal')
       ].forEach(modal => {
         modal.addEventListener('click', (e) => {
           if (e.target === modal) {
@@ -915,7 +1123,27 @@
     },
 
     openModal: function() {
+      // Check if there's a configuration error
+      if (this.configError) {
+        this.showConfigErrorModal();
+        return;
+      }
+
       const modal = this.shadow.querySelector('#betahub-modal');
+      this.showModal(modal);
+    },
+
+    showConfigErrorModal: function() {
+      const modal = this.shadow.querySelector('#betahub-config-error-modal');
+      const titleEl = this.shadow.querySelector('#betahub-config-error-title');
+      const messageEl = this.shadow.querySelector('#betahub-config-error-message');
+      const fixEl = this.shadow.querySelector('#betahub-config-error-fix');
+
+      // Populate error details
+      titleEl.textContent = `⚙️ ${this.configError.title}`;
+      messageEl.textContent = this.configError.message;
+      fixEl.textContent = this.configError.fix;
+
       this.showModal(modal);
     },
 
@@ -939,6 +1167,12 @@
     },
 
     selectType: function(type) {
+      // Only allow selecting enabled types
+      if (!this.validatedTypes.includes(type)) {
+        console.warn(`BetaHub Widget: Cannot select disabled feedback type: ${type}`);
+        return;
+      }
+
       this.currentType = type;
 
       // Update buttons
@@ -946,25 +1180,8 @@
         btn.classList.toggle('active', btn.dataset.type === type);
       });
 
-      // Update placeholders
-      const placeholders = {
-        bug: 'Describe the bug you encountered...',
-        suggestion: 'Describe your suggestion in detail...',
-        support: 'What do you need help with?'
-      };
-
-      this.shadow.querySelector('#betahub-description').placeholder = placeholders[type];
-
-      // Show/hide steps field for bugs
-      const stepsGroup = this.shadow.querySelector('#betahub-steps-group');
-      if (type === 'bug') {
-        stepsGroup.classList.remove('hidden');
-      } else {
-        stepsGroup.classList.add('hidden');
-      }
-
-      // Update email field visibility based on type
-      this.updateEmailFieldVisibility();
+      // Update form for the selected type
+      this.updateFormForType(type);
     },
 
     updateCharCount: function() {
