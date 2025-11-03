@@ -19,6 +19,19 @@ A lightweight, embeddable feedback widget for games and web applications. Allow 
 
 - **[View Live Demo](demo.html)** - Open `demo.html` in your browser to see it in action!
 
+## Screenshots
+
+The widget comes with three built-in color themes:
+
+### Pastel Blue Theme (Default)
+![Pastel Blue Theme](screenshots/pastel-blue-theme.png)
+
+### Light Theme
+![Light Theme](screenshots/light-theme.png)
+
+### Dark Theme
+![Dark Theme](screenshots/dark-theme.png)
+
 ## Quick Start
 
 ### 1. Include the Widget
@@ -70,6 +83,9 @@ That's it! The widget will appear as a floating button in the bottom-right corne
 | `userEmail` | string | `null` | Pre-filled user email (creates/links virtual user) |
 | `requireEmail` | boolean | `false` | Require email for bugs/suggestions (tickets always require) |
 | `showEmailField` | string | `'auto'` | Email field visibility: `'auto'`, `'always'`, `'never'` |
+| `theme` | string | `'pastel-blue'` | Color theme: `'pastel-blue'`, `'light'`, `'dark'` |
+| `styleOverrides` | object | `{}` | CSS variable overrides for custom colors |
+| `enabledTypes` | array | `['bug', 'suggestion', 'support']` | Enabled feedback types |
 
 ### Full Configuration Example
 
@@ -84,7 +100,11 @@ BetaHubWidget.init({
   position: 'bottom-right',
   buttonText: 'Report Bug',
 
-  // Contact information (NEW!)
+  // Theme customization
+  theme: 'pastel-blue',              // 'pastel-blue', 'light', or 'dark'
+  enabledTypes: ['bug', 'suggestion', 'support'], // Enabled feedback types
+
+  // Contact information
   userEmail: 'player@example.com',  // Pre-filled user email
   requireEmail: false,               // Require email for bugs/suggestions
   showEmailField: 'auto',            // 'auto', 'always', or 'never'
