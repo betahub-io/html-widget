@@ -17,7 +17,7 @@ A lightweight, embeddable feedback widget for games and web applications. Allow 
 
 ## Demo
 
-- **[View Live Demo](demo.html)** - Open `demo.html` in your browser to see it in action!
+- **[View Live Demo](https://betahub.io/demos/html-widget/demo.html)** - See the widget in action!
 
 ## Screenshots
 
@@ -196,6 +196,8 @@ When you provide `userEmail`, the widget:
 
 ## Programmatic API
 
+### Opening the Widget
+
 Open the widget programmatically from your code:
 
 ```javascript
@@ -207,6 +209,58 @@ This is useful for:
 - Custom "Report Bug" buttons in your UI
 - Keyboard shortcuts (e.g., press F1 to report a bug)
 - Context-specific feedback (e.g., "Report issue with this level")
+
+### Updating Custom Fields Dynamically
+
+Update custom fields after initialization to capture real-time game state:
+
+```javascript
+// Update custom fields as game state changes
+BetaHubWidget.updateCustomFields({
+  level: '5',
+  score: '1250',
+  health: '75'
+});
+```
+
+This is useful for:
+- Capturing current game state (level, score, health) when feedback is submitted
+- Updating player progress dynamically during gameplay
+- Including real-time context with bug reports
+
+**Example: PixiJS Game Integration**
+
+```javascript
+// Initialize once at game start
+BetaHubWidget.init({
+  projectId: 'your-project-id',
+  authToken: 'tkn-your-token',
+  customFields: {
+    gameVersion: '1.0.0',
+    level: '1',
+    score: '0'
+  }
+});
+
+// Update dynamically during gameplay
+function onLevelUp(newLevel) {
+  BetaHubWidget.updateCustomFields({
+    level: newLevel.toString()
+  });
+}
+
+function onScoreChange(newScore) {
+  BetaHubWidget.updateCustomFields({
+    score: newScore.toString()
+  });
+}
+```
+
+**Notes:**
+- New fields are merged with existing `customFields` (doesn't replace them)
+- Call this method anytime after `init()` to update values
+- Updated fields will be included in the next feedback submission
+- All values should be strings for consistency
 
 ## Game Engine Integration
 

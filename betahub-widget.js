@@ -1152,6 +1152,17 @@
       this.openModal();
     },
 
+    // Public method to update custom fields dynamically
+    updateCustomFields: function(fields) {
+      if (!fields || typeof fields !== 'object') {
+        console.warn('BetaHub Widget: updateCustomFields() requires an object parameter');
+        return;
+      }
+
+      // Merge new fields with existing customFields
+      this.config.customFields = Object.assign({}, this.config.customFields, fields);
+    },
+
     closeModal: function() {
       const modal = this.shadow.querySelector('#betahub-modal');
       this.hideModal(modal);
