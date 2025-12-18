@@ -178,7 +178,10 @@
       theme: 'pastel-blue',  // 'pastel-blue', 'light', 'dark'
       styleOverrides: {},  // CSS variables to override theme colors
       // Feedback type options
-      enabledTypes: ['bug', 'suggestion', 'support']  // Array of enabled feedback types
+      enabledTypes: ['bug', 'suggestion', 'support'],  // Array of enabled feedback types
+      // Lifecycle callbacks
+      onOpen: null,  // Called when feedback modal opens
+      onClose: null  // Called when feedback modal closes
     },
 
     // Internal state
@@ -1102,8 +1105,15 @@
       $('#betahub-config-error-close').addEventListener('click', () => this.hideModal($('#betahub-config-error-modal')));
 
       // Close on overlay click
+      // Main modal needs special handling to trigger callbacks and clear form
+      $('#betahub-modal').addEventListener('click', (e) => {
+        if (e.target === $('#betahub-modal')) {
+          this.closeModal();
+        }
+      });
+
+      // Other modals can just hide
       [
-        $('#betahub-modal'),
         $('#betahub-success-modal'),
         $('#betahub-error-modal'),
         $('#betahub-cancel-modal'),
@@ -1131,6 +1141,11 @@
 
       const modal = this.shadow.querySelector('#betahub-modal');
       this.showModal(modal);
+
+      // Trigger onOpen callback
+      if (typeof this.config.onOpen === 'function') {
+        this.config.onOpen();
+      }
     },
 
     showConfigErrorModal: function() {
@@ -1167,6 +1182,11 @@
       const modal = this.shadow.querySelector('#betahub-modal');
       this.hideModal(modal);
       this.clearForm();
+
+      // Trigger onClose callback
+      if (typeof this.config.onClose === 'function') {
+        this.config.onClose();
+      }
     },
 
     showModal: function(modal) {
