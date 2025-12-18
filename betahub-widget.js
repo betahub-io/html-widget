@@ -1542,16 +1542,15 @@
         const description = this.shadow.querySelector('#betahub-description').value.trim();
         const steps = this.shadow.querySelector('#betahub-steps').value.trim();
 
-        let response;
         switch (this.currentType) {
           case 'bug':
-            response = await this.submitBugReport(description, steps);
+            await this.submitBugReport(description, steps);
             break;
           case 'suggestion':
-            response = await this.submitFeatureRequest(description);
+            await this.submitFeatureRequest(description);
             break;
           case 'support':
-            response = await this.submitSupportTicket(description);
+            await this.submitSupportTicket(description);
             break;
         }
 
