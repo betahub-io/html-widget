@@ -113,8 +113,11 @@ Required parameters:
 Optional parameters:
 - `apiBaseUrl`: API endpoint (default: `https://app.betahub.io`)
 - `position`: `'bottom-right'` | `'bottom-left'` | `'top-right'` | `'top-left'` (default: `'bottom-right'`)
-- `buttonText`: Custom button text (default: `'Feedback'`)
 - `customFields`: Object with metadata sent with every submission (e.g., game version, platform, player level)
+- `locale`: Language code `'auto'` | `'en'` | `'fr'` | `'de'` | `'es'` | `'pt'` (default: `'auto'` - detects from browser)
+- `translations`: Object to override specific translation strings
+
+**Deprecated**: `buttonText` - use `translations: { buttonText: 'Your Text' }` instead
 
 ## Code Structure
 
@@ -125,6 +128,8 @@ Optional parameters:
 - `getStyles()`: Returns all CSS styles for widget with pastel blue palette
 - `initializeUI()`: Sets up initial UI state (sets current feedback type to 'bug')
 - `attachEventListeners()`: Wires up all event handlers
+- `getLocale()`: Returns the current locale (auto-detected or configured)
+- `t(key)`: Translation helper - returns localized string for the given key
 - `submitFeedback()`: Main submission handler that routes to appropriate API method
 - `submitBugReport(description, steps)`: Handles bug report API submission
 - `submitFeatureRequest(description)`: Handles feature request API submission
@@ -171,6 +176,87 @@ customFields: {
   currentScene: 'battle',
   sessionId: 'unique-session-id'
 }
+```
+
+## Localization
+
+The widget supports multiple languages with built-in translations for English, French, German, Spanish, and Portuguese.
+
+### Configuration
+```javascript
+BetaHubWidget.init({
+  projectId: '...',
+  authToken: '...',
+  locale: 'fr',  // Force French
+  // OR
+  locale: 'auto',  // Auto-detect from browser (default)
+  translations: {
+    // Override specific strings
+    buttonText: 'Custom Button'
+  }
+});
+```
+
+### Built-in Languages
+- `en` - English (default)
+- `fr` - French
+- `de` - German
+- `es` - Spanish
+- `pt` - Portuguese
+
+### Translation Keys
+All translatable strings can be overridden via the `translations` config:
+
+| Key | Default (English) |
+|-----|-------------------|
+| `buttonText` | Feedback |
+| `modalTitle` | Submit Feedback |
+| `successTitle` | Thank You! |
+| `errorTitle` | Submission Failed |
+| `discardTitle` | Discard Feedback? |
+| `feedbackTypeLabel` | Feedback Type |
+| `descriptionLabel` | Description |
+| `stepsLabel` | Steps to Reproduce |
+| `emailLabel` | Email Address |
+| `typeBug` | Bug Report |
+| `typeSuggestion` | Suggestion |
+| `typeSupport` | Support |
+| `cancelButton` | Cancel |
+| `submitButton` | Submit Feedback |
+| `submittingButton` | Submitting... |
+| `closeButton` | Close |
+| `retryButton` | Try Again |
+| `keepWritingButton` | No, Keep Writing |
+| `discardButton` | Yes, Discard |
+| `bugPlaceholder` | Describe the bug you encountered... |
+| `suggestionPlaceholder` | Describe your suggestion in detail... |
+| `supportPlaceholder` | What do you need help with? |
+| `stepsPlaceholder` | 1. Go to...\n2. Click on...\n3. Notice that... |
+| `emailPlaceholder` | your.email@example.com |
+| `warningTitle` | One Entry at a Time |
+| `warningMessage` | Please submit only ONE item per form... |
+| `successMessage` | Your feedback has been submitted successfully... |
+| `errorMessage` | We couldn't submit your feedback. Please try again. |
+| `errorDefault` | Network error: Unable to reach the server |
+| `discardMessage` | Are you sure you want to cancel? Your feedback will be lost. |
+| `emailHint` | We'll use this to contact you about updates |
+
+### Translation Priority
+1. Custom `translations` object (highest priority)
+2. Built-in translations for selected `locale`
+3. English defaults (fallback)
+
+### Adding New Languages
+To add a new language, add an entry to the `TRANSLATIONS` object in `betahub-widget.js`:
+```javascript
+const TRANSLATIONS = {
+  // ... existing languages
+  ja: {
+    buttonText: 'フィードバック',
+    modalTitle: 'フィードバックを送信',
+    // ... all other keys
+  }
+};
 ```
 
 ## Important Implementation Notes
@@ -224,3 +310,14 @@ When making changes, verify:
 - [ ] Retry mechanism works after API errors
 - [ ] Button states (default, hover, active, disabled) use correct pastel colors
 - [ ] Text contrast meets WCAG AA standards on all backgrounds
+
+### Localization Testing
+- [ ] Default English locale works correctly
+- [ ] Setting `locale: 'fr'` (or other language) shows correct translations
+- [ ] `locale: 'auto'` detects browser language
+- [ ] Custom `translations` override specific strings
+- [ ] Custom translations work with non-English locale
+- [ ] Deprecated `buttonText` still works (with console warning)
+- [ ] Unknown locale falls back to English
+- [ ] All UI elements (buttons, labels, messages, placeholders) are translated
+- [ ] Dynamic text (Submitting...) updates to translated version
