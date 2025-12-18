@@ -5,6 +5,7 @@ A lightweight, embeddable feedback widget for games and web applications. Allow 
 ## Features
 
 - **Three Feedback Types**: Bug reports, suggestions, and support tickets
+- **Multi-language Support**: Built-in translations for English, French, German, Spanish, and Portuguese with auto-detection
 - **Flexible Contact Handling**: 5 different modes for capturing user email (anonymous, required, prefilled visible/hidden, auto)
 - **Virtual User Creation**: Automatically creates/links users by email without requiring full registration
 - **Zero Dependencies**: Pure vanilla JavaScript with no external libraries
@@ -78,7 +79,8 @@ That's it! The widget will appear as a floating button in the bottom-right corne
 | `apiBaseUrl` | string | `'https://app.betahub.io'` | BetaHub API endpoint |
 | `releaseLabel` | string | `null` | Version label for bug reports (auto-creates release if doesn't exist). If not provided, bugs are assigned to the project's latest release |
 | `position` | string | `'bottom-right'` | Button position: `'bottom-right'`, `'bottom-left'`, `'top-right'`, `'top-left'` |
-| `buttonText` | string | `'Feedback'` | Custom text for the floating button |
+| `locale` | string | `'auto'` | Language: `'auto'`, `'en'`, `'fr'`, `'de'`, `'es'`, `'pt'` (auto-detects from browser) |
+| `translations` | object | `{}` | Custom translation overrides (see [Localization](#localization)) |
 | `customFields` | object | `{}` | Custom metadata sent with every submission |
 | `userEmail` | string | `null` | Pre-filled user email (creates/links virtual user) |
 | `requireEmail` | boolean | `false` | Require email for bugs/suggestions (tickets always require) |
@@ -86,6 +88,8 @@ That's it! The widget will appear as a floating button in the bottom-right corne
 | `theme` | string | `'pastel-blue'` | Color theme: `'pastel-blue'`, `'light'`, `'dark'` |
 | `styleOverrides` | object | `{}` | CSS variable overrides for custom colors |
 | `enabledTypes` | array | `['bug', 'suggestion', 'support']` | Enabled feedback types |
+
+> **Deprecated**: `buttonText` - Use `translations: { buttonText: 'Your Text' }` instead.
 
 ### Full Configuration Example
 
@@ -98,7 +102,12 @@ BetaHubWidget.init({
   apiBaseUrl: 'https://app.betahub.io',
   releaseLabel: '1.2.3',             // Version label (auto-creates release if not exists)
   position: 'bottom-right',
-  buttonText: 'Report Bug',
+
+  // Localization
+  locale: 'auto',                    // 'auto', 'en', 'fr', 'de', 'es', 'pt'
+  translations: {                    // Override specific strings
+    buttonText: 'Report Bug'
+  },
 
   // Theme customization
   theme: 'pastel-blue',              // 'pastel-blue', 'light', or 'dark'
@@ -193,6 +202,117 @@ When you provide `userEmail`, the widget:
 4. Allows BetaHub to send notifications about feedback updates
 
 **Note**: Support tickets ALWAYS require contact information. If using anonymous mode, users must enter email manually for tickets.
+
+## Localization
+
+The widget supports multiple languages with built-in translations and custom override capability.
+
+### Built-in Languages
+
+| Code | Language |
+|------|----------|
+| `en` | English (default) |
+| `fr` | French |
+| `de` | German |
+| `es` | Spanish |
+| `pt` | Portuguese |
+
+### Auto-Detection (Default)
+
+By default, the widget automatically detects the user's browser language:
+
+```javascript
+BetaHubWidget.init({
+  projectId: 'pr-123',
+  authToken: 'tkn-abc',
+  locale: 'auto'  // Default - detects from navigator.language
+});
+```
+
+### Force a Specific Language
+
+```javascript
+BetaHubWidget.init({
+  projectId: 'pr-123',
+  authToken: 'tkn-abc',
+  locale: 'fr'  // Force French regardless of browser settings
+});
+```
+
+### Custom Translations
+
+Override any string using the `translations` option:
+
+```javascript
+BetaHubWidget.init({
+  projectId: 'pr-123',
+  authToken: 'tkn-abc',
+  locale: 'en',
+  translations: {
+    buttonText: 'Report Issue',
+    modalTitle: 'Send Us Feedback',
+    submitButton: 'Send',
+    typeBug: 'Bug',
+    typeSuggestion: 'Idea',
+    typeSupport: 'Help'
+  }
+});
+```
+
+### Available Translation Keys
+
+| Key | Default (English) |
+|-----|-------------------|
+| `buttonText` | Feedback |
+| `modalTitle` | Submit Feedback |
+| `successTitle` | Thank You! |
+| `errorTitle` | Submission Failed |
+| `discardTitle` | Discard Feedback? |
+| `feedbackTypeLabel` | Feedback Type |
+| `descriptionLabel` | Description |
+| `stepsLabel` | Steps to Reproduce |
+| `emailLabel` | Email Address |
+| `typeBug` | Bug Report |
+| `typeSuggestion` | Suggestion |
+| `typeSupport` | Support |
+| `cancelButton` | Cancel |
+| `submitButton` | Submit Feedback |
+| `submittingButton` | Submitting... |
+| `closeButton` | Close |
+| `retryButton` | Try Again |
+| `keepWritingButton` | No, Keep Writing |
+| `discardButton` | Yes, Discard |
+| `bugPlaceholder` | Describe the bug you encountered... |
+| `suggestionPlaceholder` | Describe your suggestion in detail... |
+| `supportPlaceholder` | What do you need help with? |
+| `stepsPlaceholder` | 1. Go to...\n2. Click on...\n3. Notice that... |
+| `emailPlaceholder` | your.email@example.com |
+| `warningTitle` | One Entry at a Time |
+| `warningMessage` | Please submit only ONE item per form... |
+| `successMessage` | Your feedback has been submitted successfully... |
+| `errorMessage` | We couldn't submit your feedback. Please try again. |
+| `errorDefault` | Network error: Unable to reach the server |
+| `discardMessage` | Are you sure you want to cancel? Your feedback will be lost. |
+| `emailHint` | We'll use this to contact you about updates |
+
+### Translation Priority
+
+1. Custom `translations` object (highest priority)
+2. Built-in translations for selected `locale`
+3. English defaults (fallback)
+
+This means you can use a built-in language and only override specific strings:
+
+```javascript
+BetaHubWidget.init({
+  projectId: 'pr-123',
+  authToken: 'tkn-abc',
+  locale: 'fr',  // Use French translations
+  translations: {
+    buttonText: 'Signaler'  // Override just this one string
+  }
+});
+```
 
 ## Programmatic API
 
