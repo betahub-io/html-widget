@@ -217,9 +217,22 @@
                 <li>Click the button below to test it right away</li>
                 <li>Use the floating button in the bottom-right corner</li>
             </ul>
-            <button class="demo-button" onclick="BetaHubWidget.open()" style="margin-top: 15px;">
-                💬 Open Feedback Widget
-            </button>
+            <div style="display: flex; gap: 15px; align-items: center; margin-top: 15px; flex-wrap: wrap;">
+                <button class="demo-button" onclick="BetaHubWidget.open()">
+                    💬 Open Feedback Widget
+                </button>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <label for="locale-select" style="font-weight: 600; color: #237390;">Language:</label>
+                    <select id="locale-select" onchange="switchLocale(this.value)" style="padding: 8px 12px; border-radius: 6px; border: 2px solid #A8D8EA; font-size: 14px; cursor: pointer;">
+                        <option value="auto">Auto (Browser)</option>
+                        <option value="en">English</option>
+                        <option value="fr">Francais</option>
+                        <option value="de">Deutsch</option>
+                        <option value="es">Espanol</option>
+                        <option value="pt">Portugues</option>
+                    </select>
+                </div>
+            </div>
             <p style="margin-top: 15px;"><strong>Note:</strong> This demo is connected to a real BetaHub project. Your submissions will be received!</p>
         </div>
 
@@ -247,7 +260,12 @@
     <span class="comment">// Optional configuration</span>
     apiBaseUrl: <span class="string">'https://app.betahub.io'</span>,
     position: <span class="string">'bottom-right'</span>, <span class="comment">// button position</span>
-    buttonText: <span class="string">'Feedback'</span>,
+
+    <span class="comment">// Localization</span>
+    locale: <span class="string">'auto'</span>,  <span class="comment">// 'auto', 'en', 'fr', 'de', 'es', 'pt'</span>
+    translations: {  <span class="comment">// override specific strings</span>
+      buttonText: <span class="string">'Send Feedback'</span>
+    },
 
     <span class="comment">// Contact information options</span>
     userEmail: <span class="string">'user@example.com'</span>,  <span class="comment">// pre-filled email (optional)</span>
@@ -284,11 +302,12 @@
             <ul style="margin-left: 20px; color: #555;">
                 <li><code>apiBaseUrl</code> - API endpoint (default: https://app.betahub.io)</li>
                 <li><code>position</code> - 'bottom-right', 'bottom-left', 'top-right', 'top-left' (default: 'bottom-right')</li>
-                <li><code>buttonText</code> - Custom button text (default: 'Feedback')</li>
                 <li><code>customFields</code> - Object with custom metadata to include with submissions</li>
                 <li><code>userEmail</code> - Pre-filled user email (creates virtual user)</li>
                 <li><code>requireEmail</code> - Require email for bugs/suggestions (default: false, tickets always require)</li>
                 <li><code>showEmailField</code> - 'auto', 'always', 'never' (default: 'auto')</li>
+                <li><code>locale</code> - Language: 'auto', 'en', 'fr', 'de', 'es', 'pt' (default: 'auto' - detects from browser)</li>
+                <li><code>translations</code> - Object to override specific translation strings</li>
             </ul>
         </div>
 
@@ -338,26 +357,37 @@
         // Theme switcher example:
         // To change themes dynamically, you need to reinitialize the widget
         window.switchTheme = function(theme) {
+            const currentLocale = document.getElementById('locale-select')?.value || 'auto';
+            reinitWidget({ theme: theme, locale: currentLocale });
+        };
+
+        // Locale switcher
+        window.switchLocale = function(locale) {
+            reinitWidget({ locale: locale });
+        };
+
+        // Helper to reinitialize widget with new options
+        function reinitWidget(options) {
             // Remove old widget
             const oldContainer = document.getElementById('betahub-widget-container');
             if (oldContainer) {
                 oldContainer.remove();
             }
 
-            // Reinitialize with new theme
+            // Reinitialize with new options
             BetaHubWidget.init({
                 projectId: 'pr-5287510306',
                 authToken: 'tkn-15e6fbc1470613d5cfd2199edbde52157379b8c6dcd365441eabf8fea62d76a7',
                 position: 'bottom-right',
-                buttonText: 'Feedback',
-                theme: theme,
+                theme: options.theme || 'light',
+                locale: options.locale || 'auto',
                 customFields: {
                     gameVersion: '1.0.0',
                     platform: 'web-demo',
                     demoMode: true
                 }
             });
-        };
+        }
     </script>
 </body>
 </html>

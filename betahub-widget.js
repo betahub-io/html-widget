@@ -161,6 +161,191 @@
     }
   };
 
+  // Default English translations
+  const DEFAULT_TRANSLATIONS = {
+    // Floating button
+    buttonText: 'Feedback',
+
+    // Modal titles
+    modalTitle: 'Submit Feedback',
+    successTitle: 'Thank You!',
+    errorTitle: 'Submission Failed',
+    discardTitle: 'Discard Feedback?',
+
+    // Form labels
+    feedbackTypeLabel: 'Feedback Type',
+    descriptionLabel: 'Description',
+    stepsLabel: 'Steps to Reproduce',
+    emailLabel: 'Email Address',
+
+    // Type buttons
+    typeBug: 'Bug Report',
+    typeSuggestion: 'Suggestion',
+    typeSupport: 'Support',
+
+    // Action buttons
+    cancelButton: 'Cancel',
+    submitButton: 'Submit Feedback',
+    submittingButton: 'Submitting...',
+    closeButton: 'Close',
+    retryButton: 'Try Again',
+    keepWritingButton: 'No, Keep Writing',
+    discardButton: 'Yes, Discard',
+
+    // Placeholders
+    bugPlaceholder: 'Describe the bug you encountered...',
+    suggestionPlaceholder: 'Describe your suggestion in detail...',
+    supportPlaceholder: 'What do you need help with?',
+    stepsPlaceholder: '1. Go to...\n2. Click on...\n3. Notice that...',
+    emailPlaceholder: 'your.email@example.com',
+
+    // Messages
+    warningTitle: 'One Entry at a Time',
+    warningMessage: 'Please submit only ONE item per form. If you have multiple items, submit them separately.',
+    successMessage: 'Your feedback has been submitted successfully. We appreciate you taking the time to help us improve!',
+    errorMessage: 'We couldn\'t submit your feedback. Please try again.',
+    errorDefault: 'Network error: Unable to reach the server',
+    discardMessage: 'Are you sure you want to cancel? Your feedback will be lost.',
+    emailHint: 'We\'ll use this to contact you about updates'
+  };
+
+  // Built-in translations for supported languages
+  const TRANSLATIONS = {
+    en: DEFAULT_TRANSLATIONS,
+    fr: {
+      buttonText: 'Commentaires',
+      modalTitle: 'Envoyer un commentaire',
+      successTitle: 'Merci !',
+      errorTitle: 'Echec de l\'envoi',
+      discardTitle: 'Abandonner le commentaire ?',
+      feedbackTypeLabel: 'Type de commentaire',
+      descriptionLabel: 'Description',
+      stepsLabel: 'Etapes pour reproduire',
+      emailLabel: 'Adresse e-mail',
+      typeBug: 'Rapport de bug',
+      typeSuggestion: 'Suggestion',
+      typeSupport: 'Support',
+      cancelButton: 'Annuler',
+      submitButton: 'Envoyer',
+      submittingButton: 'Envoi en cours...',
+      closeButton: 'Fermer',
+      retryButton: 'Reessayer',
+      keepWritingButton: 'Non, continuer',
+      discardButton: 'Oui, abandonner',
+      bugPlaceholder: 'Decrivez le bug rencontre...',
+      suggestionPlaceholder: 'Decrivez votre suggestion en detail...',
+      supportPlaceholder: 'Comment pouvons-nous vous aider ?',
+      stepsPlaceholder: '1. Aller a...\n2. Cliquer sur...\n3. Observer que...',
+      emailPlaceholder: 'votre.email@exemple.com',
+      warningTitle: 'Une seule entree a la fois',
+      warningMessage: 'Veuillez soumettre un seul element par formulaire. Si vous avez plusieurs elements, soumettez-les separement.',
+      successMessage: 'Votre commentaire a ete envoye avec succes. Merci de nous aider a ameliorer notre produit !',
+      errorMessage: 'Nous n\'avons pas pu envoyer votre commentaire. Veuillez reessayer.',
+      errorDefault: 'Erreur reseau : impossible de joindre le serveur',
+      discardMessage: 'Etes-vous sur de vouloir annuler ? Votre commentaire sera perdu.',
+      emailHint: 'Nous utiliserons cette adresse pour vous contacter'
+    },
+    de: {
+      buttonText: 'Feedback',
+      modalTitle: 'Feedback senden',
+      successTitle: 'Vielen Dank!',
+      errorTitle: 'Senden fehlgeschlagen',
+      discardTitle: 'Feedback verwerfen?',
+      feedbackTypeLabel: 'Feedback-Typ',
+      descriptionLabel: 'Beschreibung',
+      stepsLabel: 'Schritte zur Reproduktion',
+      emailLabel: 'E-Mail-Adresse',
+      typeBug: 'Fehlerbericht',
+      typeSuggestion: 'Vorschlag',
+      typeSupport: 'Support',
+      cancelButton: 'Abbrechen',
+      submitButton: 'Feedback senden',
+      submittingButton: 'Wird gesendet...',
+      closeButton: 'Schliessen',
+      retryButton: 'Erneut versuchen',
+      keepWritingButton: 'Nein, weiterschreiben',
+      discardButton: 'Ja, verwerfen',
+      bugPlaceholder: 'Beschreiben Sie den aufgetretenen Fehler...',
+      suggestionPlaceholder: 'Beschreiben Sie Ihren Vorschlag im Detail...',
+      supportPlaceholder: 'Wie koennen wir Ihnen helfen?',
+      stepsPlaceholder: '1. Gehe zu...\n2. Klicke auf...\n3. Beachte, dass...',
+      emailPlaceholder: 'ihre.email@beispiel.de',
+      warningTitle: 'Ein Eintrag auf einmal',
+      warningMessage: 'Bitte senden Sie nur einen Eintrag pro Formular. Bei mehreren Eintraegen senden Sie diese bitte einzeln.',
+      successMessage: 'Ihr Feedback wurde erfolgreich gesendet. Vielen Dank, dass Sie uns helfen, uns zu verbessern!',
+      errorMessage: 'Wir konnten Ihr Feedback nicht senden. Bitte versuchen Sie es erneut.',
+      errorDefault: 'Netzwerkfehler: Server nicht erreichbar',
+      discardMessage: 'Sind Sie sicher, dass Sie abbrechen moechten? Ihr Feedback geht verloren.',
+      emailHint: 'Wir verwenden diese Adresse, um Sie zu kontaktieren'
+    },
+    es: {
+      buttonText: 'Comentarios',
+      modalTitle: 'Enviar comentario',
+      successTitle: 'Gracias!',
+      errorTitle: 'Error al enviar',
+      discardTitle: 'Descartar comentario?',
+      feedbackTypeLabel: 'Tipo de comentario',
+      descriptionLabel: 'Descripcion',
+      stepsLabel: 'Pasos para reproducir',
+      emailLabel: 'Correo electronico',
+      typeBug: 'Reporte de error',
+      typeSuggestion: 'Sugerencia',
+      typeSupport: 'Soporte',
+      cancelButton: 'Cancelar',
+      submitButton: 'Enviar comentario',
+      submittingButton: 'Enviando...',
+      closeButton: 'Cerrar',
+      retryButton: 'Reintentar',
+      keepWritingButton: 'No, seguir escribiendo',
+      discardButton: 'Si, descartar',
+      bugPlaceholder: 'Describa el error encontrado...',
+      suggestionPlaceholder: 'Describa su sugerencia en detalle...',
+      supportPlaceholder: 'En que podemos ayudarle?',
+      stepsPlaceholder: '1. Ir a...\n2. Hacer clic en...\n3. Observar que...',
+      emailPlaceholder: 'su.correo@ejemplo.com',
+      warningTitle: 'Una entrada a la vez',
+      warningMessage: 'Por favor envie solo un elemento por formulario. Si tiene varios elementos, envielos por separado.',
+      successMessage: 'Su comentario ha sido enviado con exito. Gracias por ayudarnos a mejorar!',
+      errorMessage: 'No pudimos enviar su comentario. Por favor intente de nuevo.',
+      errorDefault: 'Error de red: no se puede conectar al servidor',
+      discardMessage: 'Esta seguro de que desea cancelar? Su comentario se perdera.',
+      emailHint: 'Usaremos este correo para contactarle sobre actualizaciones'
+    },
+    pt: {
+      buttonText: 'Feedback',
+      modalTitle: 'Enviar feedback',
+      successTitle: 'Obrigado!',
+      errorTitle: 'Falha no envio',
+      discardTitle: 'Descartar feedback?',
+      feedbackTypeLabel: 'Tipo de feedback',
+      descriptionLabel: 'Descricao',
+      stepsLabel: 'Passos para reproduzir',
+      emailLabel: 'Endereco de e-mail',
+      typeBug: 'Relatorio de bug',
+      typeSuggestion: 'Sugestao',
+      typeSupport: 'Suporte',
+      cancelButton: 'Cancelar',
+      submitButton: 'Enviar feedback',
+      submittingButton: 'Enviando...',
+      closeButton: 'Fechar',
+      retryButton: 'Tentar novamente',
+      keepWritingButton: 'Nao, continuar escrevendo',
+      discardButton: 'Sim, descartar',
+      bugPlaceholder: 'Descreva o bug encontrado...',
+      suggestionPlaceholder: 'Descreva sua sugestao em detalhes...',
+      supportPlaceholder: 'Como podemos ajuda-lo?',
+      stepsPlaceholder: '1. Ir para...\n2. Clicar em...\n3. Observar que...',
+      emailPlaceholder: 'seu.email@exemplo.com',
+      warningTitle: 'Uma entrada por vez',
+      warningMessage: 'Por favor envie apenas um item por formulario. Se tiver varios itens, envie-os separadamente.',
+      successMessage: 'Seu feedback foi enviado com sucesso. Obrigado por nos ajudar a melhorar!',
+      errorMessage: 'Nao foi possivel enviar seu feedback. Por favor tente novamente.',
+      errorDefault: 'Erro de rede: nao foi possivel conectar ao servidor',
+      discardMessage: 'Tem certeza de que deseja cancelar? Seu feedback sera perdido.',
+      emailHint: 'Usaremos este e-mail para entrar em contato sobre atualizacoes'
+    }
+  };
+
   const BetaHubWidget = {
     config: {
       projectId: null,
@@ -181,7 +366,10 @@
       enabledTypes: ['bug', 'suggestion', 'support'],  // Array of enabled feedback types
       // Lifecycle callbacks
       onOpen: null,  // Called when feedback modal opens
-      onClose: null  // Called when feedback modal closes
+      onClose: null,  // Called when feedback modal closes
+      // Localization options
+      locale: 'auto',  // 'auto', 'en', 'fr', 'de', 'es', 'pt'
+      translations: {}  // Custom translation overrides
     },
 
     // Internal state
@@ -196,6 +384,13 @@
 
       // Merge config
       this.config = Object.assign({}, this.config, options);
+
+      // Handle deprecated buttonText option
+      if (options.buttonText && (!options.translations || !options.translations.buttonText)) {
+        console.warn('BetaHub Widget: "buttonText" option is deprecated. Use translations: { buttonText: "..." } instead.');
+        this.config.translations = this.config.translations || {};
+        this.config.translations.buttonText = options.buttonText;
+      }
 
       // Validate enabledTypes configuration
       this.validateEnabledTypes();
@@ -321,6 +516,32 @@
       this.shadow.appendChild(style);
     },
 
+    getLocale: function() {
+      // Return configured locale if not auto
+      if (this.config.locale && this.config.locale !== 'auto') {
+        // Validate locale exists, fallback to 'en'
+        return TRANSLATIONS[this.config.locale] ? this.config.locale : 'en';
+      }
+
+      // Auto-detect from browser, map 'fr-CA' -> 'fr'
+      const browserLang = (navigator.language || navigator.userLanguage || 'en').split('-')[0].toLowerCase();
+      return TRANSLATIONS[browserLang] ? browserLang : 'en';
+    },
+
+    t: function(key) {
+      // Priority: custom translations > locale translations > English default
+      if (this.config.translations && this.config.translations[key] !== undefined) {
+        return this.config.translations[key];
+      }
+
+      const locale = this.getLocale();
+      if (TRANSLATIONS[locale] && TRANSLATIONS[locale][key] !== undefined) {
+        return TRANSLATIONS[locale][key];
+      }
+
+      return DEFAULT_TRANSLATIONS[key] || key;
+    },
+
     getTemplate: function() {
       return `
         <style>
@@ -330,7 +551,7 @@
           <!-- Floating Button -->
           <button class="betahub-button" id="betahub-open-btn">
             ${this.getIcon('feedback')}
-            <span>${this.config.buttonText}</span>
+            <span>${this.t('buttonText')}</span>
           </button>
 
           <!-- Modal Overlay -->
@@ -338,47 +559,47 @@
             <div class="betahub-modal">
               <!-- Header -->
               <div class="betahub-header">
-                <h2>${this.getIcon('form')} Submit Feedback</h2>
+                <h2>${this.getIcon('form')} ${this.t('modalTitle')}</h2>
               </div>
 
               <!-- Content -->
               <div class="betahub-content">
                 <!-- Warning Box -->
                 <div class="betahub-warning-box">
-                  <p><strong>⚠️ One Entry at a Time</strong><br>
-                  Please submit only ONE item per form. If you have multiple items, submit them separately.</p>
+                  <p><strong>${this.t('warningTitle')}</strong><br>
+                  ${this.t('warningMessage')}</p>
                 </div>
 
                 <!-- Single Type Indicator (shown when only one type is enabled) -->
                 <div class="betahub-form-group betahub-single-type-indicator hidden" id="betahub-single-type-indicator">
-                  <label class="betahub-form-label">Feedback Type</label>
+                  <label class="betahub-form-label">${this.t('feedbackTypeLabel')}</label>
                   <div class="betahub-type-badge" id="betahub-type-badge">
-                    <span id="betahub-type-badge-text">Bug Report</span>
+                    <span id="betahub-type-badge-text">${this.t('typeBug')}</span>
                   </div>
                 </div>
 
                 <!-- Feedback Type Selector (shown when multiple types are enabled) -->
                 <div class="betahub-form-group" id="betahub-type-selector-group">
-                  <label class="betahub-form-label">Feedback Type</label>
+                  <label class="betahub-form-label">${this.t('feedbackTypeLabel')}</label>
                   <div class="betahub-type-selector">
                     <button class="betahub-type-btn active" data-type="bug">
-                      Bug Report
+                      ${this.t('typeBug')}
                     </button>
                     <button class="betahub-type-btn" data-type="suggestion">
-                      Suggestion
+                      ${this.t('typeSuggestion')}
                     </button>
                     <button class="betahub-type-btn" data-type="support">
-                      Support
+                      ${this.t('typeSupport')}
                     </button>
                   </div>
                 </div>
 
                 <!-- Description Field -->
                 <div class="betahub-form-group">
-                  <label class="betahub-form-label" id="betahub-description-label">Description</label>
+                  <label class="betahub-form-label" id="betahub-description-label">${this.t('descriptionLabel')}</label>
                   <textarea
                     id="betahub-description"
-                    placeholder="Describe the bug you encountered..."
+                    placeholder="${this.t('bugPlaceholder')}"
                     maxlength="2000"
                   ></textarea>
                   <div class="betahub-char-count">
@@ -388,11 +609,11 @@
 
                 <!-- Steps to Reproduce (Bug only) -->
                 <div class="betahub-form-group" id="betahub-steps-group">
-                  <label class="betahub-form-label">Steps to Reproduce</label>
+                  <label class="betahub-form-label">${this.t('stepsLabel')}</label>
                   <textarea
                     id="betahub-steps"
                     class="betahub-steps-textarea"
-                    placeholder="1. Go to...&#10;2. Click on...&#10;3. Notice that..."
+                    placeholder="${this.t('stepsPlaceholder')}"
                     maxlength="1000"
                   ></textarea>
                   <div class="betahub-char-count">
@@ -402,23 +623,23 @@
 
                 <!-- Email Field (conditional) -->
                 <div class="betahub-form-group" id="betahub-email-group">
-                  <label class="betahub-form-label">Email Address</label>
+                  <label class="betahub-form-label">${this.t('emailLabel')}</label>
                   <input
                     type="email"
                     id="betahub-email"
                     class="betahub-email-input"
-                    placeholder="your.email@example.com"
+                    placeholder="${this.t('emailPlaceholder')}"
                     maxlength="255"
                   />
                   <div class="betahub-field-hint">
-                    We'll use this to contact you about updates
+                    ${this.t('emailHint')}
                   </div>
                 </div>
 
                 <!-- Button Group -->
                 <div class="betahub-button-group">
-                  <button class="betahub-btn betahub-btn-secondary" id="betahub-cancel-btn">Cancel</button>
-                  <button class="betahub-btn betahub-btn-primary" id="betahub-submit-btn" disabled>Submit Feedback</button>
+                  <button class="betahub-btn betahub-btn-secondary" id="betahub-cancel-btn">${this.t('cancelButton')}</button>
+                  <button class="betahub-btn betahub-btn-primary" id="betahub-submit-btn" disabled>${this.t('submitButton')}</button>
                 </div>
               </div>
             </div>
@@ -428,13 +649,13 @@
           <div class="betahub-modal-overlay" id="betahub-success-modal">
             <div class="betahub-modal betahub-small-modal">
               <div class="betahub-header">
-                <h3 class="betahub-modal-title">✅ Thank You!</h3>
+                <h3 class="betahub-modal-title">${this.t('successTitle')}</h3>
               </div>
               <div class="betahub-modal-body">
-                Your feedback has been submitted successfully. We appreciate you taking the time to help us improve!
+                ${this.t('successMessage')}
               </div>
               <div class="betahub-modal-footer">
-                <button class="betahub-btn betahub-btn-success" id="betahub-success-ok">Close</button>
+                <button class="betahub-btn betahub-btn-success" id="betahub-success-ok">${this.t('closeButton')}</button>
               </div>
             </div>
           </div>
@@ -443,17 +664,17 @@
           <div class="betahub-modal-overlay" id="betahub-error-modal">
             <div class="betahub-modal betahub-small-modal">
               <div class="betahub-header">
-                <h3 class="betahub-modal-title">❌ Submission Failed</h3>
+                <h3 class="betahub-modal-title">${this.t('errorTitle')}</h3>
               </div>
               <div class="betahub-modal-body">
-                We couldn't submit your feedback. Please try again.
+                ${this.t('errorMessage')}
                 <div class="betahub-error-box">
-                  <p id="betahub-error-message">Network error: Unable to reach the server</p>
+                  <p id="betahub-error-message">${this.t('errorDefault')}</p>
                 </div>
               </div>
               <div class="betahub-modal-footer">
-                <button class="betahub-btn betahub-btn-secondary" id="betahub-error-cancel">Cancel</button>
-                <button class="betahub-btn betahub-btn-primary" id="betahub-error-retry">Try Again</button>
+                <button class="betahub-btn betahub-btn-secondary" id="betahub-error-cancel">${this.t('cancelButton')}</button>
+                <button class="betahub-btn betahub-btn-primary" id="betahub-error-retry">${this.t('retryButton')}</button>
               </div>
             </div>
           </div>
@@ -462,14 +683,14 @@
           <div class="betahub-modal-overlay" id="betahub-cancel-modal">
             <div class="betahub-modal betahub-small-modal">
               <div class="betahub-header">
-                <h3 class="betahub-modal-title">⚠️ Discard Feedback?</h3>
+                <h3 class="betahub-modal-title">${this.t('discardTitle')}</h3>
               </div>
               <div class="betahub-modal-body">
-                Are you sure you want to cancel? Your feedback will be lost.
+                ${this.t('discardMessage')}
               </div>
               <div class="betahub-modal-footer">
-                <button class="betahub-btn betahub-btn-secondary" id="betahub-cancel-no">No, Keep Writing</button>
-                <button class="betahub-btn betahub-btn-danger" id="betahub-cancel-yes">Yes, Discard</button>
+                <button class="betahub-btn betahub-btn-secondary" id="betahub-cancel-no">${this.t('keepWritingButton')}</button>
+                <button class="betahub-btn betahub-btn-danger" id="betahub-cancel-yes">${this.t('discardButton')}</button>
               </div>
             </div>
           </div>
@@ -984,11 +1205,11 @@
     },
 
     updateFormForType: function(type) {
-      // Update placeholders
+      // Update placeholders using translations
       const placeholders = {
-        bug: 'Describe the bug you encountered...',
-        suggestion: 'Describe your suggestion in detail...',
-        support: 'What do you need help with?'
+        bug: this.t('bugPlaceholder'),
+        suggestion: this.t('suggestionPlaceholder'),
+        support: this.t('supportPlaceholder')
       };
 
       this.shadow.querySelector('#betahub-description').placeholder = placeholders[type];
@@ -1315,7 +1536,7 @@
       if (submitBtn.disabled) return;
 
       submitBtn.disabled = true;
-      submitBtn.textContent = 'Submitting...';
+      submitBtn.textContent = this.t('submittingButton');
 
       try {
         const description = this.shadow.querySelector('#betahub-description').value.trim();
@@ -1344,7 +1565,7 @@
         this.showModal(this.shadow.querySelector('#betahub-error-modal'));
       } finally {
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Submit Feedback';
+        submitBtn.textContent = this.t('submitButton');
       }
     },
 
