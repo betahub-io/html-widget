@@ -308,6 +308,10 @@
                 <li><code>showEmailField</code> - 'auto', 'always', 'never' (default: 'auto')</li>
                 <li><code>locale</code> - Language: 'auto', 'en', 'fr', 'de', 'es', 'pt' (default: 'auto' - detects from browser)</li>
                 <li><code>translations</code> - Object to override specific translation strings</li>
+                <li><code>submissionToken</code> - Static JWT submission token (single-use, mutually exclusive with submissionTokenUrl)</li>
+                <li><code>submissionTokenUrl</code> - URL to fetch JWT dynamically on each modal open (sends cookies)</li>
+                <li><code>submissionTokenMethod</code> - HTTP method for token URL (default: 'POST')</li>
+                <li><code>submissionTokenFallback</code> - Behavior on fetch failure: 'block' or 'allow' (default: 'block')</li>
             </ul>
         </div>
 
@@ -349,6 +353,11 @@
                 platform: 'web-demo',
                 demoMode: true
             }
+            // Submission token options (choose one, not both):
+            // submissionToken: 'eyJhbG...',           // Static JWT from your server
+            // submissionTokenUrl: '/api/betahub-token', // Dynamic endpoint (fetched on each open)
+            // submissionTokenMethod: 'POST',           // HTTP method (default: POST)
+            // submissionTokenFallback: 'block'         // 'block' or 'allow' on failure
         });
 
         // Note: This demo is configured with BetaHub demo project credentials

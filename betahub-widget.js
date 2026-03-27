@@ -206,7 +206,13 @@
     errorMessage: 'We couldn\'t submit your feedback. Please try again.',
     errorDefault: 'Network error: Unable to reach the server',
     discardMessage: 'Are you sure you want to cancel? Your feedback will be lost.',
-    emailHint: 'We\'ll use this to contact you about updates'
+    emailHint: 'We\'ll use this to contact you about updates',
+
+    // Submission token messages
+    tokenLoading: 'Preparing submission...',
+    tokenFetchError: 'Unable to prepare submission. Please try again later.',
+    tokenUsed: 'Submission token used. Reload the page to submit again.',
+    tokenFetchRetry: 'Retry'
   };
 
   // Built-in translations for supported languages
@@ -243,7 +249,11 @@
       errorMessage: 'Nous n\'avons pas pu envoyer votre commentaire. Veuillez reessayer.',
       errorDefault: 'Erreur reseau : impossible de joindre le serveur',
       discardMessage: 'Etes-vous sur de vouloir annuler ? Votre commentaire sera perdu.',
-      emailHint: 'Nous utiliserons cette adresse pour vous contacter'
+      emailHint: 'Nous utiliserons cette adresse pour vous contacter',
+      tokenLoading: 'Preparation de l\'envoi...',
+      tokenFetchError: 'Impossible de preparer l\'envoi. Veuillez reessayer plus tard.',
+      tokenUsed: 'Jeton utilise. Rechargez la page pour soumettre a nouveau.',
+      tokenFetchRetry: 'Reessayer'
     },
     de: {
       buttonText: 'Feedback',
@@ -276,7 +286,11 @@
       errorMessage: 'Wir konnten Ihr Feedback nicht senden. Bitte versuchen Sie es erneut.',
       errorDefault: 'Netzwerkfehler: Server nicht erreichbar',
       discardMessage: 'Sind Sie sicher, dass Sie abbrechen moechten? Ihr Feedback geht verloren.',
-      emailHint: 'Wir verwenden diese Adresse, um Sie zu kontaktieren'
+      emailHint: 'Wir verwenden diese Adresse, um Sie zu kontaktieren',
+      tokenLoading: 'Einreichung wird vorbereitet...',
+      tokenFetchError: 'Einreichung kann nicht vorbereitet werden. Bitte versuchen Sie es spaeter erneut.',
+      tokenUsed: 'Token verwendet. Laden Sie die Seite neu, um erneut einzureichen.',
+      tokenFetchRetry: 'Erneut versuchen'
     },
     es: {
       buttonText: 'Comentarios',
@@ -309,7 +323,11 @@
       errorMessage: 'No pudimos enviar su comentario. Por favor intente de nuevo.',
       errorDefault: 'Error de red: no se puede conectar al servidor',
       discardMessage: 'Esta seguro de que desea cancelar? Su comentario se perdera.',
-      emailHint: 'Usaremos este correo para contactarle sobre actualizaciones'
+      emailHint: 'Usaremos este correo para contactarle sobre actualizaciones',
+      tokenLoading: 'Preparando envio...',
+      tokenFetchError: 'No se pudo preparar el envio. Intentelo de nuevo mas tarde.',
+      tokenUsed: 'Token utilizado. Recargue la pagina para enviar de nuevo.',
+      tokenFetchRetry: 'Reintentar'
     },
     pt: {
       buttonText: 'Feedback',
@@ -342,7 +360,11 @@
       errorMessage: 'Nao foi possivel enviar seu feedback. Por favor tente novamente.',
       errorDefault: 'Erro de rede: nao foi possivel conectar ao servidor',
       discardMessage: 'Tem certeza de que deseja cancelar? Seu feedback sera perdido.',
-      emailHint: 'Usaremos este e-mail para entrar em contato sobre atualizacoes'
+      emailHint: 'Usaremos este e-mail para entrar em contato sobre atualizacoes',
+      tokenLoading: 'Preparando envio...',
+      tokenFetchError: 'Nao foi possivel preparar o envio. Tente novamente mais tarde.',
+      tokenUsed: 'Token utilizado. Recarregue a pagina para enviar novamente.',
+      tokenFetchRetry: 'Tentar novamente'
     }
   };
 
@@ -369,12 +391,21 @@
       onClose: null,  // Called when feedback modal closes
       // Localization options
       locale: 'auto',  // 'auto', 'en', 'fr', 'de', 'es', 'pt'
-      translations: {}  // Custom translation overrides
+      translations: {},  // Custom translation overrides
+      // Submission token options (JWT)
+      submissionToken: null,            // Static JWT string (single-use)
+      submissionTokenUrl: null,         // URL to fetch JWT dynamically on each modal open
+      submissionTokenMethod: 'POST',    // HTTP method for the token URL
+      submissionTokenFallback: 'block'  // 'block' or 'allow' — behavior on fetch failure
     },
 
     // Internal state
     validatedTypes: [],
     configError: null,
+    _currentSubmissionToken: null,
+    _tokenEmail: null,
+    _staticTokenConsumed: false,
+    _tokenFetchInProgress: false,
 
     init: function(options) {
       if (!options.projectId || !options.authToken) {
@@ -390,6 +421,18 @@
         console.warn('BetaHub Widget: "buttonText" option is deprecated. Use translations: { buttonText: "..." } instead.');
         this.config.translations = this.config.translations || {};
         this.config.translations.buttonText = options.buttonText;
+      }
+
+      // Validate submission token config: mutual exclusion
+      if (this.config.submissionToken && this.config.submissionTokenUrl) {
+        const msg = 'Both "submissionToken" and "submissionTokenUrl" are set. Use only one.';
+        console.error('BetaHub Widget Configuration Error:', msg);
+        alert('BetaHub Widget Configuration Error: ' + msg);
+        this.configError = {
+          title: 'Conflicting Submission Token Options',
+          message: msg,
+          fix: 'Remove either "submissionToken" or "submissionTokenUrl" from your BetaHubWidget.init() configuration.'
+        };
       }
 
       // Validate enabledTypes configuration
@@ -564,6 +607,23 @@
 
               <!-- Content -->
               <div class="betahub-content">
+                <!-- Token Loading Indicator -->
+                <div class="betahub-token-loading hidden" id="betahub-token-loading">
+                  <div class="betahub-spinner"></div>
+                  <span>${this.t('tokenLoading')}</span>
+                </div>
+
+                <!-- Token Error Banner -->
+                <div class="betahub-token-error hidden" id="betahub-token-error">
+                  <p id="betahub-token-error-message">${this.t('tokenFetchError')}</p>
+                  <button id="betahub-token-retry-btn">${this.t('tokenFetchRetry')}</button>
+                </div>
+
+                <!-- Token Consumed Message -->
+                <div class="betahub-token-consumed hidden" id="betahub-token-consumed">
+                  <p>${this.t('tokenUsed')}</p>
+                </div>
+
                 <!-- Warning Box -->
                 <div class="betahub-warning-box">
                   <p><strong>${this.t('warningTitle')}</strong><br>
@@ -1109,6 +1169,82 @@
           margin: 0;
         }
 
+        /* Token loading spinner */
+        .betahub-token-loading {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          padding: 16px;
+          color: var(--text-secondary);
+          font-size: 13px;
+        }
+
+        .betahub-token-loading .betahub-spinner {
+          width: 16px;
+          height: 16px;
+          border: 2px solid var(--border-color);
+          border-top-color: var(--primary-button);
+          border-radius: 50%;
+          animation: betahub-spin 0.6s linear infinite;
+        }
+
+        @keyframes betahub-spin {
+          to { transform: rotate(360deg); }
+        }
+
+        /* Token error banner (inline in form area) */
+        .betahub-token-error {
+          background: var(--error-bg);
+          border: 1px solid var(--error-border);
+          border-radius: 6px;
+          padding: 12px;
+          margin-bottom: 16px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        .betahub-token-error p {
+          color: var(--error-text);
+          font-size: 13px;
+          margin: 0;
+        }
+
+        .betahub-token-error button {
+          background: none;
+          border: 1px solid var(--error-border);
+          border-radius: 4px;
+          color: var(--error-text);
+          padding: 4px 10px;
+          cursor: pointer;
+          font-size: 12px;
+          white-space: nowrap;
+          margin-left: 12px;
+        }
+
+        .betahub-token-error button:hover {
+          background: var(--error-border);
+          color: #ffffff;
+        }
+
+        /* Token consumed message */
+        .betahub-token-consumed {
+          background: #FFF8E1;
+          border: 1px solid var(--warning-color);
+          border-radius: 6px;
+          padding: 12px;
+          margin-bottom: 16px;
+          text-align: center;
+        }
+
+        .betahub-token-consumed p {
+          color: var(--text-primary);
+          font-size: 13px;
+          margin: 0;
+          font-weight: 600;
+        }
+
         /* Scrollbar Styling */
         .betahub-modal::-webkit-scrollbar {
           width: 8px;
@@ -1252,8 +1388,8 @@
       }
 
       // showEmailField = 'auto' (default) → smart logic
-      // Show if email is prefilled (readonly display)
-      if (userEmail) {
+      // Show if email is prefilled (readonly display) — from config or from token
+      if (userEmail || this._tokenEmail) {
         return true;
       }
 
@@ -1325,6 +1461,11 @@
       // Config Error
       $('#betahub-config-error-close').addEventListener('click', () => this.hideModal($('#betahub-config-error-modal')));
 
+      // Token retry
+      $('#betahub-token-retry-btn').addEventListener('click', () => {
+        this.fetchSubmissionToken();
+      });
+
       // Close on overlay click
       // Main modal needs special handling to trigger callbacks and clear form
       $('#betahub-modal').addEventListener('click', (e) => {
@@ -1353,6 +1494,68 @@
       }
     },
 
+    fetchSubmissionToken: async function() {
+      if (!this.config.submissionTokenUrl || this._tokenFetchInProgress) return;
+
+      this._tokenFetchInProgress = true;
+
+      const loadingEl = this.shadow.querySelector('#betahub-token-loading');
+      const errorEl = this.shadow.querySelector('#betahub-token-error');
+      const submitBtn = this.shadow.querySelector('#betahub-submit-btn');
+
+      loadingEl.classList.remove('hidden');
+      errorEl.classList.add('hidden');
+      submitBtn.disabled = true;
+
+      try {
+        const response = await fetch(this.config.submissionTokenUrl, {
+          method: this.config.submissionTokenMethod || 'POST',
+          credentials: 'include',
+          headers: { 'Accept': 'application/json' }
+        });
+
+        if (!response.ok) {
+          throw new Error(`Token endpoint returned ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data.token) {
+          throw new Error('Token endpoint response missing "token" field');
+        }
+
+        this._currentSubmissionToken = data.token;
+
+        // If response includes email, prefill and lock the email field
+        if (data.email) {
+          this._tokenEmail = data.email;
+          const emailInput = this.shadow.querySelector('#betahub-email');
+          emailInput.value = data.email;
+          emailInput.readOnly = true;
+          this.updateEmailFieldVisibility();
+        }
+
+        loadingEl.classList.add('hidden');
+        this.updateSubmitButton();
+      } catch (error) {
+        console.error('BetaHub Widget: Failed to fetch submission token', error);
+        loadingEl.classList.add('hidden');
+
+        if (this.config.submissionTokenFallback === 'allow') {
+          console.warn('BetaHub Widget: Proceeding without submission token (fallback: allow)');
+          this._currentSubmissionToken = null;
+          this.updateSubmitButton();
+        } else {
+          errorEl.classList.remove('hidden');
+          this.shadow.querySelector('#betahub-token-error-message').textContent =
+            this.t('tokenFetchError');
+          submitBtn.disabled = true;
+        }
+      } finally {
+        this._tokenFetchInProgress = false;
+      }
+    },
+
     openModal: function() {
       // Check if there's a configuration error
       if (this.configError) {
@@ -1360,8 +1563,27 @@
         return;
       }
 
+      // Check if static token was already consumed
+      if (this.config.submissionToken && this._staticTokenConsumed) {
+        const modal = this.shadow.querySelector('#betahub-modal');
+        this.showModal(modal);
+        this.shadow.querySelector('#betahub-token-consumed').classList.remove('hidden');
+        this.shadow.querySelector('#betahub-submit-btn').disabled = true;
+        if (typeof this.config.onOpen === 'function') this.config.onOpen();
+        return;
+      }
+
       const modal = this.shadow.querySelector('#betahub-modal');
       this.showModal(modal);
+
+      // Initialize submission token for this modal session
+      if (this.config.submissionToken) {
+        this._currentSubmissionToken = this.config.submissionToken;
+      } else if (this.config.submissionTokenUrl) {
+        this._currentSubmissionToken = null;
+        this._tokenEmail = null;
+        this.fetchSubmissionToken();
+      }
 
       // Trigger onOpen callback
       if (typeof this.config.onOpen === 'function') {
@@ -1451,18 +1673,38 @@
     },
 
     updateSubmitButton: function() {
+      const submitBtn = this.shadow.querySelector('#betahub-submit-btn');
+
+      // Token-related blocks
+      if (this._tokenFetchInProgress) {
+        submitBtn.disabled = true;
+        return;
+      }
+      if (this.config.submissionToken && this._staticTokenConsumed) {
+        submitBtn.disabled = true;
+        return;
+      }
+      if (this.config.submissionTokenUrl &&
+          this.config.submissionTokenFallback !== 'allow' &&
+          !this._currentSubmissionToken) {
+        const errorEl = this.shadow.querySelector('#betahub-token-error');
+        if (errorEl && !errorEl.classList.contains('hidden')) {
+          submitBtn.disabled = true;
+          return;
+        }
+      }
+
       const description = this.shadow.querySelector('#betahub-description').value.trim();
       const steps = this.shadow.querySelector('#betahub-steps').value.trim();
       const email = this.shadow.querySelector('#betahub-email').value.trim();
       const emailGroup = this.shadow.querySelector('#betahub-email-group');
-      const submitBtn = this.shadow.querySelector('#betahub-submit-btn');
 
       const hasDescription = description.length > 0;
       const hasSteps = this.currentType !== 'bug' || steps.length > 0;
 
       // Check if email is required and valid
       const emailVisible = !emailGroup.classList.contains('hidden');
-      const emailRequired = emailVisible && !this.config.userEmail;  // Required if shown and not prefilled
+      const emailRequired = emailVisible && !this.config.userEmail && !this._tokenEmail;
       const hasValidEmail = !emailRequired || (email.length > 0 && this.isValidEmail(email));
 
       submitBtn.disabled = !(hasDescription && hasSteps && hasValidEmail);
@@ -1475,14 +1717,18 @@
     },
 
     getAuthorizationHeader: function() {
-      const email = this.getUserEmail();
+      // Priority 1: JWT submission token (email embedded in JWT)
+      if (this._currentSubmissionToken) {
+        return `FormUser ${this.config.authToken},${this._currentSubmissionToken}`;
+      }
 
-      // If email available, include it in auth header
+      // Priority 2: Email (existing behavior)
+      const email = this.getUserEmail();
       if (email) {
         return `FormUser ${this.config.authToken},email:${email}`;
       }
 
-      // Otherwise, just use the auth token
+      // Priority 3: Auth token only
       return `FormUser ${this.config.authToken}`;
     },
 
@@ -1527,6 +1773,22 @@
         this.shadow.querySelector('#betahub-email').value = '';
       }
 
+      // Reset token UI elements
+      const tokenLoading = this.shadow.querySelector('#betahub-token-loading');
+      const tokenError = this.shadow.querySelector('#betahub-token-error');
+      const tokenConsumed = this.shadow.querySelector('#betahub-token-consumed');
+      if (tokenLoading) tokenLoading.classList.add('hidden');
+      if (tokenError) tokenError.classList.add('hidden');
+      if (tokenConsumed) tokenConsumed.classList.add('hidden');
+
+      // Reset token email prefill (only for dynamic token)
+      if (this._tokenEmail && !this.config.userEmail) {
+        this._tokenEmail = null;
+        const emailInput = this.shadow.querySelector('#betahub-email');
+        emailInput.value = '';
+        emailInput.readOnly = false;
+      }
+
       // Reset to bug type
       this.selectType('bug');
     },
@@ -1554,7 +1816,15 @@
             break;
         }
 
-        // Success
+        // Success — consume submission token
+        if (this.config.submissionToken) {
+          this._staticTokenConsumed = true;
+          this._currentSubmissionToken = null;
+        } else if (this.config.submissionTokenUrl) {
+          this._currentSubmissionToken = null;
+          this._tokenEmail = null;
+        }
+
         this.showModal(this.shadow.querySelector('#betahub-success-modal'));
         this.clearForm();
       } catch (error) {

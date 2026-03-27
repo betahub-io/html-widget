@@ -82,7 +82,7 @@ The widget submits to three BetaHub endpoints:
   - Required field: `description`
 
 All requests include:
-- `Authorization: FormUser {authToken}` header
+- `Authorization: FormUser {authToken}` or `FormUser {authToken},{jwt}` (when submission token available) or `FormUser {authToken},email:{email}` (when email available)
 - `BetaHub-Project-ID: {projectId}` header
 - Custom fields as nested parameters: `issue[custom_fields][key]`
 
@@ -116,6 +116,10 @@ Optional parameters:
 - `customFields`: Object with metadata sent with every submission (e.g., game version, platform, player level)
 - `locale`: Language code `'auto'` | `'en'` | `'fr'` | `'de'` | `'es'` | `'pt'` (default: `'auto'` - detects from browser)
 - `translations`: Object to override specific translation strings
+- `submissionToken`: Static JWT string for tamper-proof submissions (single-use, mutually exclusive with `submissionTokenUrl`)
+- `submissionTokenUrl`: URL to fetch JWT dynamically on each modal open (sends cookies via `credentials: 'include'`)
+- `submissionTokenMethod`: HTTP method for the token URL (default: `'POST'`)
+- `submissionTokenFallback`: `'block'` (default) | `'allow'` — what happens when token fetch fails
 
 **Deprecated**: `buttonText` - use `translations: { buttonText: 'Your Text' }` instead
 
@@ -321,3 +325,15 @@ When making changes, verify:
 - [ ] Unknown locale falls back to English
 - [ ] All UI elements (buttons, labels, messages, placeholders) are translated
 - [ ] Dynamic text (Submitting...) updates to translated version
+
+### Submission Token Testing
+- [ ] Static `submissionToken`: used and consumed correctly on first submit
+- [ ] Static token: second submit attempt shows "token consumed" message
+- [ ] Dynamic `submissionTokenUrl`: JWT fetched on modal open with cookies
+- [ ] Dynamic token: new token fetched on each subsequent modal open
+- [ ] Mutual exclusion: setting both options shows config error
+- [ ] `submissionTokenFallback: 'block'`: submit disabled when fetch fails
+- [ ] `submissionTokenFallback: 'allow'`: submit works without token when fetch fails
+- [ ] Token retry button works after fetch failure
+- [ ] Email from token URL response prefills and locks email field
+- [ ] Auth header uses `FormUser tkn-xxx,<jwt>` format when token present
