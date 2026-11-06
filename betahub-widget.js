@@ -1732,6 +1732,22 @@
       return `FormUser ${this.config.authToken}`;
     },
 
+    // One key per text and email. The server may cut a slow request and still finish it, so
+    // sending the same text again must return the saved suggestion, not create a second one.
+    // A changed email is another author, for whom the server would refuse the old key.
+    getIdempotencyKey: function(text) {
+      const submission = `${this.getUserEmail() || ''}\n${text}`;
+
+      if (this._idempotencySubmission !== submission) {
+        this._idempotencySubmission = submission;
+        this._idempotencyKey = window.crypto && window.crypto.randomUUID
+          ? window.crypto.randomUUID()
+          : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      }
+
+      return this._idempotencyKey;
+    },
+
     getUserEmail: function() {
       // Priority: 1) Prefilled userEmail, 2) User-entered email from form
       if (this.config.userEmail) {
@@ -1894,7 +1910,8 @@
         headers: {
           'Authorization': this.getAuthorizationHeader(),
           'BetaHub-Project-ID': this.config.projectId,
-          'Content-Type': 'application/x-www-form-urlencoded'
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Idempotency-Key': this.getIdempotencyKey(description)
         },
         body: formData.toString()
       });
