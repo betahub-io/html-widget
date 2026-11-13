@@ -1245,6 +1245,13 @@
           font-weight: 600;
         }
 
+        /* The token boxes start hidden and show only while a submission token is used */
+        .betahub-token-loading.hidden,
+        .betahub-token-error.hidden,
+        .betahub-token-consumed.hidden {
+          display: none;
+        }
+
         /* Scrollbar Styling */
         .betahub-modal::-webkit-scrollbar {
           width: 8px;
