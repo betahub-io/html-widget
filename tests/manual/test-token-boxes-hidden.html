@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test: Submission token boxes stay hidden - BetaHub Widget</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 40px; background: #f0f0f0; }
+        h1 { color: #333; }
+        .info { background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        #result { font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="info">
+        <h1>Test: Submission token boxes stay hidden</h1>
+        <p><strong>Configuration:</strong> no <code>submissionToken</code> or <code>submissionTokenUrl</code></p>
+        <p><strong>Expected:</strong> opening the widget shows no "Preparing submission…", no "Unable to prepare
+            submission" and no "Submission token used" box. The page opens the widget by itself and checks.</p>
+        <p>Result: <span id="result" data-testid="result">running…</span></p>
+    </div>
+
+    <script src="../../betahub-widget.js"></script>
+    <script>
+        BetaHubWidget.init({
+            projectId: 'pr-0000000000',
+            authToken: 'tkn-test',
+            position: 'bottom-right'
+        });
+
+        // Opens the modal, then reports every token box that is displayed.
+        setTimeout(() => {
+            const root = document.getElementById('betahub-widget-container').shadowRoot;
+            root.getElementById('betahub-open-btn').click();
+            setTimeout(() => {
+                const shown = ['betahub-token-loading', 'betahub-token-error', 'betahub-token-consumed']
+                    .filter((id) => getComputedStyle(root.getElementById(id)).display !== 'none');
+                const result = document.getElementById('result');
+                result.textContent = shown.length === 0 ? 'PASS' : `FAIL: shown ${shown.join(', ')}`;
+                result.style.color = shown.length === 0 ? 'green' : 'red';
+            }, 500);
+        }, 300);
+    </script>
+</body>
+</html>
